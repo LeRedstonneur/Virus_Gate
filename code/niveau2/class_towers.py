@@ -1,4 +1,5 @@
 import pygame
+# A faire : ajouter des commentaires
 
 class TowerDefense:
     def __init__(self, x, y, image):
