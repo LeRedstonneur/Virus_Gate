@@ -17,10 +17,14 @@ class Player:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.mouvements["jump"] = True
+                    self.canMove["left"] = True
+                    self.canMove["right"] = True
                 if event.key == pygame.K_LEFT or event.key == pygame.K_q:
                     self.mouvements["left"] = True
+                    self.canMove["right"] = True
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.mouvements["right"] = True
+                    self.canMove["left"] = True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     self.mouvements["jump"] = False
@@ -29,43 +33,52 @@ class Player:
                 if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.mouvements["right"] = False
 
+        # Par défaut, il est possible de bouger
+        self.canMove = {"left": True, "right": True, "down": True, "up": True}
+
         # Les touches du clavier
         if self.mouvements["left"]:
-            self.posx += self.speed
+            # On vérifie s'il y a un obstacle
+            for element in obstacles:
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx - self.speed,-self.posy,30,30), element):
+                    self.canMove["left"] = False
+            if self.canMove["left"]:
+                self.posx += self.speed
+
         if self.mouvements["right"]:
-            self.posx -= self.speed
+            # On vérifie s'il y a un obstacle
+            for element in obstacles:
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx + self.speed,-self.posy,30,30), element):
+                    self.canMove["right"] = False
+            if self.canMove["right"]:
+                self.posx -= self.speed
+
         if self.mouvements["jump"]:
             if self.posy == -1000:  # Si le joueur n'est pas en train de sauter
                 self.vitesseVerticale = self.jump_height
 
         # La physique
         if self.posy > -1000 or self.vitesseVerticale > 0:
-            self.vitesseVerticale -= 10
-        else:
+            # On vérifie s'il y a un obstacle
+            for element in obstacles:
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx,-self.posy - self.vitesseVerticale,30,30), element):
+                    self.canMove["down"] = False
+            if self.canMove["down"]:
+                self.vitesseVerticale -= 10
+        elif self.canMove["down"]:
             self.vitesseVerticale = 0
             self.posy = -1000
-        self.posy += self.vitesseVerticale
-        
-        # On ajoute le joueur sur l'écran
-        pygame.draw.rect(screen, 'BLUE',(-self.posx,-self.posy,30,30))
+        if (self.vitesseVerticale > 0 and self.canMove["up"]) or (self.vitesseVerticale < 0 and self.canMove["down"]):
+            self.posy += self.vitesseVerticale
 
         self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
 
         # Gestion des obstacles
         for element in obstacles:
-            while self.rectangle.colliderect(element):
-                # self.posx += 1
-                # self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
-                # La variable collision_rect contient la zone de collision
-                self.collision_rect = self.rectangle.clip(element)
-                if self.collision_rect.width > self.collision_rect.height:
-                    if self.collision_rect.x > element.x:
-                        self.posx += 100
-                        self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
-                    else:
-                        self.posx -= 100
-                        self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
-                else:
-                    pass
-                    #self.posy += 500
-                    #self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
+            while pygame.Rect.colliderect(self.rectangle, element):
+                self.posy -= 10
+                self.canMove["right"] = False
+                self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
+
+        # On ajoute le joueur sur l'écran
+        pygame.draw.rect(screen, 'BLUE',(-self.posx,-self.posy,30,30))
