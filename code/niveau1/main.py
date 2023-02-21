@@ -2,7 +2,6 @@ import pygame
 from player import Player
 from quit import quit
 
-
 def start():
     '''Cette fonction est appelée par l'écran d'accueil pour démarrer le niveau'''
     pygame.init()
@@ -40,6 +39,7 @@ def start():
     transparent_surface.blit(texte_bouton, (0, 0))
     pygame.draw.rect(transparent_surface, (0, 0, 0, 0), transparent_surface.get_rect(), 1)
 
+#    obstacles = [pygame.Rect(1000, 1000, 50, 50), pygame.Rect(0, 1010, 1920, 5)]
     obstacles = [pygame.Rect(1000, 1000, 50, 50)]
 
     running = True
