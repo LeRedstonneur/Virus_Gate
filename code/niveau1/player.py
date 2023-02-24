@@ -4,14 +4,16 @@ import pygame
 class Player:
     def __init__(self):
         self.posx = 0
-        self.posy = -1000
+        self.posy = -500
         self.speed = 10  # La vitesse du déplacement horizontal
         self.vitesseVerticale = 0
         self.jump_height = 50
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
-    
+        self.canMove = {"left": True, "right": True, "down": True, "up": True}
+        self.rectangle = pygame.Rect(-self.posx, -self.posy, 30, 30)
+
     def update(self, maj, screen, obstacles):
         for event in maj:
             if event.type == pygame.KEYDOWN:
@@ -40,7 +42,7 @@ class Player:
         if self.mouvements["left"]:
             # On vérifie s'il y a un obstacle
             for element in obstacles:
-                if pygame.Rect.colliderect(pygame.Rect(-self.posx - self.speed,-self.posy,30,30), element):
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx - self.speed, -self.posy, 30, 30), element):
                     self.canMove["left"] = False
             if self.canMove["left"]:
                 self.posx += self.speed
@@ -48,37 +50,41 @@ class Player:
         if self.mouvements["right"]:
             # On vérifie s'il y a un obstacle
             for element in obstacles:
-                if pygame.Rect.colliderect(pygame.Rect(-self.posx + self.speed,-self.posy,30,30), element):
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx + self.speed, -self.posy, 30, 30), element):
                     self.canMove["right"] = False
             if self.canMove["right"]:
                 self.posx -= self.speed
 
         if self.mouvements["jump"]:
-            if self.posy == -1000:  # Si le joueur n'est pas en train de sauter
+            if self.canMove["down"] is False:  # Si le joueur n'est pas en train de sauter
                 self.vitesseVerticale = self.jump_height
 
         # La physique
-        if self.posy > -1000 or self.vitesseVerticale > 0:
+        if self.vitesseVerticale > 0:
             # On vérifie s'il y a un obstacle
+            self.canMove["down"] = True
             for element in obstacles:
-                if pygame.Rect.colliderect(pygame.Rect(-self.posx,-self.posy - self.vitesseVerticale,30,30), element):
+                if pygame.Rect.colliderect(pygame.Rect(-self.posx, -self.posy - self.vitesseVerticale, 30, 30),
+                                           element):
                     self.canMove["down"] = False
+                    self.vitesseVerticale = 0
             if self.canMove["down"]:
                 self.vitesseVerticale -= 10
         elif self.canMove["down"]:
-            self.vitesseVerticale = 0
-            self.posy = -1000
+            self.vitesseVerticale -= 10
+            # self.posy = -500
         if (self.vitesseVerticale > 0 and self.canMove["up"]) or (self.vitesseVerticale < 0 and self.canMove["down"]):
             self.posy += self.vitesseVerticale
+        self.rectangle = pygame.Rect(-self.posx, -self.posy, 30, 30)
 
-        self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
+        print(f"{self.canMove['down']} et {self.vitesseVerticale}")
 
         # Gestion des obstacles
         for element in obstacles:
             while pygame.Rect.colliderect(self.rectangle, element):
                 self.posy -= 10
                 self.canMove["right"] = False
-                self.rectangle = pygame.Rect(-self.posx,-self.posy,30,30)
+                self.rectangle = pygame.Rect(-self.posx, -self.posy, 30, 30)
 
         # On ajoute le joueur sur l'écran
-        pygame.draw.rect(screen, 'BLUE',(-self.posx,-self.posy,30,30))
+        pygame.draw.rect(screen, 'BLUE', (-self.posx, -self.posy, 30, 30))
