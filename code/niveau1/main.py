@@ -36,11 +36,13 @@ def start():
     transparent_surface.blit(texte_bouton, (0, 0))
     pygame.draw.rect(transparent_surface, (0, 0, 0, 0), transparent_surface.get_rect(), 1)
 
-    obstacles = [pygame.Rect(1000, 1000, 50, 50), pygame.Rect(0, 1010, 1920, 500)]
+    obstacles = [pygame.Rect(1000, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(900, 700, 50, 250)]
     # obstacles = [pygame.Rect(1000, 960, 50, 100)]
 
+    clock = pygame.time.Clock()
+
     while True:
-        pygame.time.Clock().tick(60)
+        clock.tick(60)
 
         maj = pygame.event.get()
 

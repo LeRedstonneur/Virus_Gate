@@ -7,7 +7,8 @@ class Player:
         self.posy = -580
         self.speed = 10  # La vitesse du déplacement horizontal
         self.vitesseVerticale = 0
-        self.jump_height = 50
+        self.jump_height = 25
+        self.gravite = 5
         self.largeur = 30
         self.hauteur = 30
 
@@ -68,7 +69,7 @@ class Player:
             self.saut(obstacles)
 
         if self.canMove["down"] and not self.surObstacle(obstacles):
-            self.vitesseVerticale = max(self.vitesseVerticale - 10, -1000)
+            self.vitesseVerticale = max(self.vitesseVerticale - self.gravite, -1000)
             # Borne supérieure à la vitesse de chute (peut être assimilé aux frottements de l'air)
 
         # On empêche de passer sous la map
