@@ -5,12 +5,16 @@ class Player:
     def __init__(self):
         self.posx = 0
         self.posy = -580
-        self.speed = 10  # La vitesse du déplacement horizontal
+        self.vitesse = 10  # La vitesse du déplacement horizontal
         self.vitesseVerticale = 0
-        self.jump_height = 25
+        self.hauteur_de_saut = 25
         self.gravite = 5
         self.largeur = 30
         self.hauteur = 30
+        self.vies_max = 3
+        self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
+        self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
+        self.ralentissement = 0
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
@@ -18,6 +22,8 @@ class Player:
         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
 
     def update(self, maj, screen, obstacles):
+        self.speed = int(self.vitesse * (1 - self.ralentissement))
+        self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
         for event in maj:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -88,7 +94,15 @@ class Player:
                 self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
 
         # On ajoute le joueur sur l'écran
-        pygame.draw.rect(screen, 'BLUE', (-self.posx, -self.posy, self.largeur, self.hauteur))
+        if self.pause == 0:
+            pygame.draw.rect(screen, 'BLUE', (-self.posx, -self.posy, self.largeur, self.hauteur))
+        else:
+            pygame.draw.rect(screen, 'GRAY', (-self.posx, -self.posy, self.largeur, self.hauteur))
+
+        # On dessine la barre de vie sur l'écran
+        pygame.draw.rect(screen, 'GREEN', (1000, 1800, 80, 100))
+
+        self.afficherVies()
 
     def surObstacle(self, obstacles) -> bool:
         joueur_rect = pygame.Rect(-self.posx, -self.posy + 1, self.largeur, self.hauteur)
@@ -129,3 +143,21 @@ class Player:
             if self.sousObstacle(obstacles):
                 self.vitesseVerticale = 0
                 return
+
+    def afficherVies(self) -> None:
+        # Définition des dimensions et de la position du rectangle vert
+        x, y = pygame.display.get_surface().get_size()
+        largeur_rect_vert = 200
+        hauteur_rect_vert = 30
+        position_rect_vert = (x - largeur_rect_vert - 10, y - hauteur_rect_vert - 10)
+
+        # Définition des dimensions et de la position du rectangle rouge
+        largeur_rect_rouge = largeur_rect_vert * ((self.vies_max - self.vies) / self.vies_max)
+        hauteur_rect_rouge = hauteur_rect_vert
+        position_rect_rouge = position_rect_vert
+
+        # Dessin des rectangles
+        rect_vert = pygame.Rect(position_rect_vert, (largeur_rect_vert, hauteur_rect_vert))
+        rect_rouge = pygame.Rect(position_rect_rouge, (largeur_rect_rouge, hauteur_rect_rouge))
+        pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), rect_vert)
+        pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), rect_rouge)

@@ -1,5 +1,7 @@
 import pygame
 from player import Player
+from tower import Tower
+from trap import Trap
 from quit import leave
 
 
@@ -36,10 +38,11 @@ def start():
     transparent_surface.blit(texte_bouton, (0, 0))
     pygame.draw.rect(transparent_surface, (0, 0, 0, 0), transparent_surface.get_rect(), 1)
 
-    obstacles = [pygame.Rect(1000, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(900, 700, 50, 250)]
-    # obstacles = [pygame.Rect(1000, 960, 50, 100)]
-
     clock = pygame.time.Clock()
+
+    obstacles = [pygame.Rect(1000, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(900, 700, 50, 250)]
+    towers = [Tower("classique", -500, -500), Tower("degats_de_zone", -1000, -500)]
+    traps = [Trap(-750, -1000)]
 
     while True:
         clock.tick(60)
@@ -66,9 +69,29 @@ def start():
         for element in obstacles:
             pygame.draw.rect(screen, (0, 0, 0), element)
 
+        # On s'occupe des tours si le joueur n'a pas été touché
+        if joueur.pause == 0:
+            for tour in towers:
+                tour.update(screen, joueur, obstacles)
+        else:
+            for tour in towers:
+                tour.update(screen, joueur, obstacles, pause=True)
+            joueur.pause -= 1
+
+        joueur.ralentissement = 0
+        # On ralentit éventuellement le joueur
+        for trap in traps:
+            trap.update(screen, joueur)
+
         joueur.update(maj, screen, obstacles)
 
         pygame.display.update()
 
+        if joueur.vies <= 0:
+            # A faire : fin de partie
+            leave()
+            return
+
 
 start()
+
