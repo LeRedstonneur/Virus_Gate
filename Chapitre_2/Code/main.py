@@ -39,6 +39,7 @@ def start():
     obstacles = [pygame.Rect(1000, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(900, 700, 50, 250)]
     towers = [Tower("classique", -500, -500), Tower("degats_de_zone", -1000, -500)]
     traps = [Trap(-750, -1000)]
+    # spikes = [Spike(-750, -1100)]
 
     # On récupère les informations de l'écran
     screen_info = pygame.display.Info()
@@ -48,6 +49,8 @@ def start():
     obstacles.append(pygame.Rect(w, 0, 1, h))  # Droite
     
     running = True
+
+    padding = 0
 
     while True:
         clock.tick(60)
@@ -73,25 +76,31 @@ def start():
 
             # On affiche les obstacles
             for element in obstacles:
-                pygame.draw.rect(screen, (0, 0, 0), element)
+                temp = element.move(padding, 0)
+                pygame.draw.rect(screen, (0, 0, 0), temp)
 
             # On s'occupe des tours si le joueur n'a pas été touché
             if joueur.pause == 0:
                 for tour in towers:
-                    tour.update(screen, joueur, obstacles)
+                    tour.update(screen, joueur, obstacles, padding)
             else:
                 for tour in towers:
-                    tour.update(screen, joueur, obstacles, pause=True)
+                    tour.update(screen, joueur, obstacles, padding, pause=True)
                 joueur.pause -= 1
 
             joueur.ralentissement = 0
             # On ralentit éventuellement le joueur
             for trap in traps:
-                trap.update(screen, joueur)
+                trap.update(screen, joueur, padding)
 
-            joueur.update(maj, screen, obstacles)
+            joueur.update(maj, screen, obstacles, padding)
 
             pygame.display.update()
+
+            if -joueur.posx < 750:
+                padding = 0
+            else:
+                padding = joueur.posx + 750
 
             if joueur.vies <= 0:
                 running = False
@@ -99,7 +108,6 @@ def start():
             # Si on arrive ici, c'est que la partie est finie
 
             # on devrait afficher au milieu de l'écran que la partie est finie
-
             font = pygame.font.SysFont("Arial", 72)
             text = font.render("Partie terminée", True, (128, 0, 0))
             screen.blit(text,(320 - text.get_width() // 2, 240 - text.get_height() // 2))

@@ -21,7 +21,7 @@ class Player:
         self.canMove = {"left": True, "right": True, "down": True, "up": True}
         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
 
-    def update(self, maj, screen, obstacles):
+    def update(self, maj, screen, obstacles, padding):
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
         for event in maj:
@@ -95,13 +95,12 @@ class Player:
 
         # On ajoute le joueur sur l'écran
         if self.pause == 0:
-            pygame.draw.rect(screen, 'BLUE', (-self.posx, -self.posy, self.largeur, self.hauteur))
+            pygame.draw.rect(screen, 'BLUE', (-self.posx + padding, -self.posy, self.largeur, self.hauteur))
         else:
-            pygame.draw.rect(screen, 'GRAY', (-self.posx, -self.posy, self.largeur, self.hauteur))
+            pygame.draw.rect(screen, 'GRAY', (-self.posx + padding, -self.posy, self.largeur, self.hauteur))
 
         # On dessine la barre de vie sur l'écran
         pygame.draw.rect(screen, 'GREEN', (1000, 1800, 80, 100))
-
         self.afficherVies()
 
     def surObstacle(self, obstacles) -> bool:
