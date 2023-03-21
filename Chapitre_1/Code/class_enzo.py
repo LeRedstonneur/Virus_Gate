@@ -89,26 +89,27 @@ class Enemy(pygame.sprite.Sprite):
         # Calculer la distance entre l'ennemi et sa destination
         dx = self.destination[0] - self.rect.x
         dy = self.destination[1] - self.rect.y
-        distance = math.sqrt(dx**2 + dy**2)
-        
+        distance = math.sqrt(dx ** 2 + dy ** 2)
+
         # Si l'ennemi est arrivé à sa destination, choisir un nouveau checkpoint
         if distance < self.speed:
             self.current_checkpoint += 1
-            if self.current_checkpoint >= len(self.checkpoints):
+            if self.current_checkpoint >= len(self.path):
                 self.kill()
                 return
-            self.destination = self.checkpoints[self.current_checkpoint]
+            self.destination = self.path[self.current_checkpoint]
             dx = self.destination[0] - self.rect.x
             dy = self.destination[1] - self.rect.y
-            distance = math.sqrt(dx**2 + dy**2)
-        
+            distance = math.sqrt(dx ** 2 + dy ** 2)
+
         # Calculer la direction et la distance de déplacement
-        direction = (dx/distance, dy/distance)
-        movement = (direction[0]*self.speed, direction[1]*self.speed)
-        
+        direction = (dx / distance, dy / distance)
+        movement = (direction[0] * self.speed, direction[1] * self.speed)
+
         # Mettre à jour la position de l'ennemi
         self.rect.x += movement[0]
         self.rect.y += movement[1]
+
 
 
 
