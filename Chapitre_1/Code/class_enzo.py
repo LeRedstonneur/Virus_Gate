@@ -32,6 +32,9 @@ class TowerDefense(pygame.sprite.Sprite):
         speed = ((self.x - enemy.rect.x) ** 2 + (self.y - enemy.rect.y) ** 2) ** 0.5
         return speed <= self.range
 
+    def sell(self):
+        #money += price*70/100
+        del self
     
           
 
@@ -71,6 +74,9 @@ class RoundTower(TowerDefense):
             if self.target.is_dead():
                 self.target = None
 
+        
+
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         super().__init__()
@@ -80,10 +86,11 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = y
         self.tempx = float(x)
         self.tempy = float(y)
-        self.path = [(600, 50), (50, 50), (50, 600), (400, 600), (400, 300), (700, 300), (700, 700)]
+        self.path = [(600, 50), (50, 50), (50, 600), (400, 600), (400, 300), (700, 300), (700, 850)]
         self.current_checkpoint = 0
         self.destination = self.path[self.current_checkpoint]
-        self.speed = 4
+        self.speed = 10
+        self.has_traversed = False 
         
     def update(self):
         # calculer la distance et la direction vers la destination actuelle
@@ -101,12 +108,12 @@ class Enemy(pygame.sprite.Sprite):
         if distance < self.speed or distance == 0:
             self.current_checkpoint += 1
             if self.current_checkpoint >= len(self.path):
+                self.has_traversed = True
                 # on est arrivé au dernier checkpoint, on peut supprimer l'ennemi
                 del self
-                print("kill")
+                
             else:
                 self.destination = self.path[self.current_checkpoint]
-
 
     def take_damage(self, damage):
         self.health -= damage
@@ -116,6 +123,21 @@ class Enemy(pygame.sprite.Sprite):
 
     def is_dead(self):
         return self.health <= 0
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+class Base():
+    def __init__(self, x, y, image):
+        self.x=x
+        self.y=y
+        self.image= pygame.image.load(image)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def remove(self):
+        del self
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
