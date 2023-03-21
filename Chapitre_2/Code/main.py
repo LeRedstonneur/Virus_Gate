@@ -65,6 +65,10 @@ def start():
                 if rectangle_bouton.collidepoint(event.pos):
                     leave()
                     return  # On return pour quitter la fonction start
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    leave()
+                    return
 
         if running:
             screen.fill((255, 255, 255))
