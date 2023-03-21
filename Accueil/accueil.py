@@ -16,42 +16,32 @@ BLUE_HACKER = (45, 53, 82)
 # Définir la police et la taille de la police
 font = pygame.font.Font(None, 36)
 
-# Charger le fichier audio dans un objet de son 
+# Charger les fichiers audios dans un objet de son
 son_accueil = pygame.mixer.Sound("Bande son accueil.mp3")
 son_accueil.play(-1)
 son_accueil.set_volume(0.1)
 
-# Volume de la bande son accueil (par défaut à 50%)
-volume_bande_son_accueil = 0.5
-
-# Volume des effets sonores (par défaut à 50%)
-volume_effets_sonores = 0.5
-
-# Luminosité (par défaut à 50%)
-luminosite = 0.5
+son_effets_sonores = pygame.mixer.Sound("Menu click button.mp3")
+son_effets_sonores.play()
+son_effets_sonores.set_volume(0.5)
 
 # Définir les dimensions et l'emplacement du premier bouton
-button1_width = 300
-button1_height = 100
 button1_x = 50
-button1_y = height / 1.3 - button1_height / 1.3
+button1_y = height / 1.3 - 77
 
-button1 = pygame.Surface((button1_width, button1_height))
+button1 = pygame.Surface((300, 100))
 button1.fill(BLUE_HACKER )
 button1_text = font.render("Niveau 1", True, BLACK)
-button1_text_rect = button1_text.get_rect(center=(button1_width / 2, button1_height / 2))
+button1_text_rect = button1_text.get_rect(center=(150, 50))
 button1.blit(button1_text, button1_text_rect)
 
 # Définir les dimensions et l'emplacement du second boutton
-button2_width = 300
-button2_height = 100
 button2_x = 50
-button2_y = width / 2 - button1_height / 2
-
-button2 = pygame.Surface((button2_width, button2_height))
+button2_y = width / 2 - 50
+button2 = pygame.Surface((300, 100))
 button2.fill(BLUE_HACKER )
 button2_text = font.render("Niveau 2", True, BLACK)
-button2_text_rect = button2_text.get_rect(center=(button2_width / 2, button2_height / 2))
+button2_text_rect = button2_text.get_rect(center=(150, 50))
 button2.blit(button2_text, button2_text_rect)
 in_options = False
 
@@ -100,18 +90,64 @@ def barre_volume(volume):
     barre_volume_bande_son = pygame.Surface((int(volume_bande_son_accueil * 5000), 50))
     barre_volume_bande_son.fill((0, 255, 0))  # couleur verte
     barre_volume_bande_son_rect = barre_volume_bande_son.get_rect()
-    barre_volume_bande_son_rect.x = 300
-    barre_volume_bande_son_rect.y = 200
+    barre_volume_bande_son_rect.x = 710
+    barre_volume_bande_son_rect.y = 250
 
     # Curseur pour régler le volume de la bande son
     curseur_volume_bande_son = pygame.Surface((500, 50))
     curseur_volume_bande_son.fill((0, 0, 0))  # couleur noire
     curseur_volume_bande_son_rect = curseur_volume_bande_son.get_rect()
-    curseur_volume_bande_son_rect.x = int(300 + volume_bande_son_accueil * 200 - 10)
-    curseur_volume_bande_son_rect.y = 200
+    curseur_volume_bande_son_rect.x = int(710 + volume_bande_son_accueil * 200 - 10)
+    curseur_volume_bande_son_rect.y = 250
 
     # Réduire le volume de la bande son en fonction du réglage
     son_accueil.set_volume(volume)
+
+def barre_effets_sonores(effets_sonores):
+    global volume_effets_sonores
+    global barre_volume_effets_sonores
+    global barre_volume_effets_sonores_rect
+    global curseur_volume_effets_sonores
+    global curseur_volume_effets_sonores_rect
+
+    volume_effets_sonores = effets_sonores
+
+    # Mettre à jour la barre de progression du volume de la bande son
+    barre_volume_effets_sonores = pygame.Surface((int(volume_effets_sonores * 5000), 50))
+    barre_volume_effets_sonores.fill((0, 255, 0))  # couleur verte
+    barre_volume_effets_sonores_rect = barre_volume_effets_sonores.get_rect()
+    barre_volume_effets_sonores_rect.x = 710
+    barre_volume_effets_sonores_rect.y = 500
+
+    # Curseur pour régler le volume de la bande son
+    curseur_volume_effets_sonores = pygame.Surface((500, 50))
+    curseur_volume_effets_sonores.fill((0, 0, 0))  # couleur noire
+    curseur_volume_effets_sonores_rect = curseur_volume_effets_sonores.get_rect()
+    curseur_volume_effets_sonores_rect.x = int(710 + volume_effets_sonores * 200 - 10)
+    curseur_volume_effets_sonores_rect.y = 500
+
+def barre_luminosite_fun(luminosite):
+    global luminosite_reglages
+    global barre_luminosite
+    global barre_luminosite_rect
+    global curseur_luminosite
+    global curseur_luminosite_rect
+
+    luminosite_reglages = luminosite
+
+    # Mettre à jour la barre de progression du volume de la bande son
+    barre_luminosite = pygame.Surface((int(luminosite_reglages * 5000), 50))
+    barre_luminosite.fill((0, 255, 0))  # couleur verte
+    barre_luminosite_rect = barre_luminosite.get_rect()
+    barre_luminosite_rect.x = 710
+    barre_luminosite_rect.y = 750
+
+    # Curseur pour régler le volume de la bande son
+    curseur_luminosite = pygame.Surface((500, 50))
+    curseur_luminosite.fill((0, 0, 0))  # couleur noire
+    curseur_luminosite_rect = curseur_luminosite.get_rect()
+    curseur_luminosite_rect.x = int(710 + luminosite_reglages * 200 - 10)
+    curseur_luminosite_rect.y = 750
 
 def afficher_options():
     global in_options
@@ -130,7 +166,7 @@ def afficher_options():
     options_page = pygame.Surface((width, height))
     options_page.fill(WHITE)
     options_title = font.render("Options", True, BLACK)
-    options_title_rect = options_title.get_rect(center=(width / 2, height / 2))
+    options_title_rect = options_title.get_rect(center=(width / 2, height / 10))
     options_page.blit(options_title, options_title_rect)
 
     # Correction : supprimer le code redondant pour la création du bouton "Retour"
@@ -139,14 +175,24 @@ def afficher_options():
     return_text = font.render("Retour", True, BLACK)
     return_text_rect = return_text.get_rect(center=(options_width / 2, options_height / 2))
     return_button.blit(return_text, return_text_rect)
-    return_rect = return_button.get_rect(center=(width / 2, height / 1.5)) 
+    return_rect = return_button.get_rect(center=(width / 2, height / 1.1)) 
     options_page.blit(return_button, return_rect)
 
-    # Appeler la fonction barre_volume après la création du curseur et avant l'affichage de la page
+    # Appeler les fonction des barres après la création du curseur et avant l'affichage de la page
     barre_volume(0.1)
 
     options_page.blit(curseur_volume_bande_son, curseur_volume_bande_son_rect)
     options_page.blit(barre_volume_bande_son, barre_volume_bande_son_rect)
+
+    barre_effets_sonores(0.1)
+
+    options_page.blit(curseur_volume_effets_sonores, curseur_volume_effets_sonores_rect)
+    options_page.blit(barre_volume_effets_sonores, barre_volume_effets_sonores_rect)
+
+    barre_luminosite_fun(0.1)   
+
+    options_page.blit(curseur_luminosite, curseur_luminosite_rect)
+    options_page.blit(barre_luminosite, barre_luminosite_rect)
     
     screen.blit(options_page, (0, 0))
 
