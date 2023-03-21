@@ -71,7 +71,6 @@ class RoundTower(TowerDefense):
             if self.target.is_dead():
                 self.target = None
 
-        
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
         super().__init__()
@@ -79,38 +78,34 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        
+        self.tempx = float(x)
+        self.tempy = float(y)
         self.path = [(600, 50), (50, 50), (50, 600), (400, 600), (400, 300), (700, 300), (700, 700)]
         self.current_checkpoint = 0
         self.destination = self.path[self.current_checkpoint]
-        self.speed = 2
-
+        self.speed = 4
+        
     def update(self):
-        # Calculer la distance entre l'ennemi et sa destination
+        # calculer la distance et la direction vers la destination actuelle
         dx = self.destination[0] - self.rect.x
         dy = self.destination[1] - self.rect.y
-        distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        # Si l'ennemi est arrivé à sa destination, choisir un nouveau checkpoint
-        if distance < self.speed:
+        distance = math.hypot(dx, dy)
+        
+        if distance > 0 :
+            direction = (dx / distance, dy / distance)
+            self.tempx += float(direction[0] * self.speed)
+            self.tempy += float(direction[1] * self.speed)
+            self.rect.x = self.tempx
+            self.rect.y = self.tempy
+        
+        if distance < self.speed or distance == 0:
             self.current_checkpoint += 1
             if self.current_checkpoint >= len(self.path):
-                self.kill()
-                return
-            self.destination = self.path[self.current_checkpoint]
-            dx = self.destination[0] - self.rect.x
-            dy = self.destination[1] - self.rect.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-
-        # Calculer la direction et la distance de déplacement
-        direction = (dx / distance, dy / distance)
-        movement = (direction[0] * self.speed, direction[1] * self.speed)
-
-        # Mettre à jour la position de l'ennemi
-        self.rect.x += movement[0]
-        self.rect.y += movement[1]
-
-
+                # on est arrivé au dernier checkpoint, on peut supprimer l'ennemi
+                del self
+                print("kill")
+            else:
+                self.destination = self.path[self.current_checkpoint]
 
 
     def take_damage(self, damage):
