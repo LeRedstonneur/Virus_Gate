@@ -11,7 +11,7 @@ class Player:
         self.gravite = 5
         self.largeur = 30
         self.hauteur = 30
-        self.vies_max = 3
+        self.vies_max = 1
         self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
         self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
         self.ralentissement = 0

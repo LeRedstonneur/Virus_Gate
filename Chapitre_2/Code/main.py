@@ -20,10 +20,6 @@ def start():
     # L'objet Joueur
     joueur = Player()
 
-    # On récupère les informations de l'écran
-    # screen_info = pygame.display.Info()
-    # w, h = screen_info.current_w, screen_info.current_h
-
     # définition des dimensions du bouton
     largeur_bouton = 100
     hauteur_bouton = 50
@@ -44,6 +40,15 @@ def start():
     towers = [Tower("classique", -500, -500), Tower("degats_de_zone", -1000, -500)]
     traps = [Trap(-750, -1000)]
 
+    # On récupère les informations de l'écran
+    screen_info = pygame.display.Info()
+    h, w = screen_info.current_h, screen_info.current_w
+    # On ajoute des obstacles correspondant aux bords de l'écran
+    obstacles.append(pygame.Rect(-1, 0, 1, h))  # Gauche
+    obstacles.append(pygame.Rect(w, 0, 1, h))  # Droite
+    
+    running = True
+
     while True:
         clock.tick(60)
 
@@ -58,40 +63,50 @@ def start():
                     leave()
                     return  # On return pour quitter la fonction start
 
-        screen.fill((255, 255, 255))
-        rect = rect.move(0, 0)
-        screen.blit(bg, rect)
+        if running:
+            screen.fill((255, 255, 255))
+            rect = rect.move(0, 0)
+            screen.blit(bg, rect)
 
-        # On affiche la croix à l'écran
-        screen.blit(transparent_surface, rectangle_bouton)
+            # On affiche la croix à l'écran
+            screen.blit(transparent_surface, rectangle_bouton)
 
-        # On affiche les obstacles
-        for element in obstacles:
-            pygame.draw.rect(screen, (0, 0, 0), element)
+            # On affiche les obstacles
+            for element in obstacles:
+                pygame.draw.rect(screen, (0, 0, 0), element)
 
-        # On s'occupe des tours si le joueur n'a pas été touché
-        if joueur.pause == 0:
-            for tour in towers:
-                tour.update(screen, joueur, obstacles)
+            # On s'occupe des tours si le joueur n'a pas été touché
+            if joueur.pause == 0:
+                for tour in towers:
+                    tour.update(screen, joueur, obstacles)
+            else:
+                for tour in towers:
+                    tour.update(screen, joueur, obstacles, pause=True)
+                joueur.pause -= 1
+
+            joueur.ralentissement = 0
+            # On ralentit éventuellement le joueur
+            for trap in traps:
+                trap.update(screen, joueur)
+
+            joueur.update(maj, screen, obstacles)
+
+            pygame.display.update()
+
+            if joueur.vies <= 0:
+                running = False
         else:
-            for tour in towers:
-                tour.update(screen, joueur, obstacles, pause=True)
-            joueur.pause -= 1
+            # Si on arrive ici, c'est que la partie est finie
 
-        joueur.ralentissement = 0
-        # On ralentit éventuellement le joueur
-        for trap in traps:
-            trap.update(screen, joueur)
+            # on devrait afficher au milieu de l'écran que la partie est finie
 
-        joueur.update(maj, screen, obstacles)
-
-        pygame.display.update()
-
-        if joueur.vies <= 0:
-            # A faire : fin de partie
-            leave()
-            return
-
+            font = pygame.font.SysFont("Arial", 72)
+            text = font.render("Partie terminée", True, (128, 0, 0))
+            screen.blit(text,(320 - text.get_width() // 2, 240 - text.get_height() // 2))
+            
+            pygame.display.flip()
+            # leave()
+            # return
 
 start()
 
