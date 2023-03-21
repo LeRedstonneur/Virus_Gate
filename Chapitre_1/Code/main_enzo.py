@@ -1,16 +1,17 @@
 import pygame
-from all import SquareTower, Enemy
+from classtd import*
 
 pygame.init()
 SCREEN_SIZE = (800, 800)
-socle1 = pygame.transform.scale(pygame.image.load('socle.png'), (90, 90))
-map1 = pygame.transform.scale(pygame.image.load('map1.png'), (800, 600))
-screen = pygame.display.set_mode(SCREEN_SIZE)
-etat = 0
+screen = pygame.display.set_mode(SCREEN_SIZE) 
+
 startpos_x = 600
 startpos_y = 50
 
 enemy = []
+square_towers = []
+bases = [Base(250, 250, 'base.png'),Base(100, 100, 'base.png'),Base(400, 400, 'base.png')]
+
 
 def draw_spawn_enemy():
     
@@ -35,37 +36,55 @@ def draw_spawn_enemy():
         
     screen.blit(text_surface, text_rect)
 
-draw_spawn_enemy.mouse_state = False
-
-
-socle_rect = socle1.get_rect()
-socle_rect.center = (170, 230)
-
-# Créer une liste pour stocker toutes les tours carrées
-square_towers = []
 
 
 # Boucle principale
 running = True
 mouse_down = False
+draw_spawn_enemy.mouse_state = False
 
 #Initialiser le temps 
 clock = pygame.time.Clock()
 
 while running:
-    screen.fill((255, 255, 255))
+    screen.fill((255, 255, 255)) 
     clock.tick(60)  # la méthode tick() renvoie le temps en millisecondes, nous le convertissons en secondes
-    draw_spawn_enemy()
+    draw_spawn_enemy() #temporaire
+
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.MOUSEBUTTONUP:
-            mouse_pos = pygame.mouse.get_pos()
+        # //
 
-            if socle_rect.collidepoint(mouse_pos):
-                square_towers.append(SquareTower(socle_rect.x, socle_rect.y, 'square_tower.png', 1))
+        if event.type == pygame.MOUSEBUTTONUP and bool(bases): #et la liste pour les bases non vide
+            mouse_pos = pygame.mouse.get_pos()
+            for base in bases :
+                if base.rect.collidepoint(mouse_pos):
+                        square_towers.append(SquareTower(base.rect.x+5, base.rect.y+5, 'square_tower.png', 1))
+                        base.remove
+                        bases.remove(base)
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and bool(square_towers):  # Left mouse button clicked
+            pos = pygame.mouse.get_pos()
+            for tower in square_towers:
+                if tower.rect.collidepoint(pos):
+                    tower.mouse_down = True
+        else :
+            for tower in square_towers:
+                tower.mouse_down = False
+
+            if event.type == pygame.KEYDOWN and bool(square_towers):
+                if event.key == pygame.K_s:
+                    pos = pygame.mouse.get_pos()
+                    for tower in square_towers:
+                        if tower.rect.collidepoint(pos):
+                            bases.append(Base(tower.rect.x-5, tower.rect.y-5, 'base.png'))
+                            tower.sell()
+                            square_towers.remove(tower)
+
+        # ////
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = pygame.mouse.get_pos()
@@ -76,18 +95,24 @@ while running:
             for tower in square_towers:
                 tower.mouse_down = False
 
-    screen.blit(socle1, socle_rect)
+  
+
+    #GESTION SQUARETOWER
     for tower in square_towers:
         if tower.mouse_down:
             tower.draw_range(screen)
-
         tower.draw(screen)
 
-    # Dessiner chaque ennemi à l'écran
+    #GESTION BASE
+    for base in bases :
+        base.draw(screen)
+        
+    #GESTION ENEMY
     for enemy_obj in enemy:
-        print(enemy_obj.rect.x,enemy_obj.rect.y)
         enemy_obj.draw(screen)
         enemy_obj.update()
+        if enemy_obj.has_traversed:
+            enemy.remove(enemy_obj)
 
     pygame.display.flip()
 
