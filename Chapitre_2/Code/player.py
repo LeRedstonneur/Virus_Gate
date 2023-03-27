@@ -1,4 +1,5 @@
 import pygame
+import time
 
 
 class Player:
@@ -11,38 +12,39 @@ class Player:
         self.gravite = 5
         self.largeur = 30
         self.hauteur = 30
-        self.vies_max = 1
+        self.vies_max = 5
         self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
         self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
         self.ralentissement = 0
+        self.speed = int(self.vitesse * (1 - self.ralentissement))
+        self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
         self.canMove = {"left": True, "right": True, "down": True, "up": True}
         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
 
-    def update(self, maj, screen, obstacles, padding):
+        self.last_jump_time = time.time()
+
+    def update(self, keys, screen, obstacles, padding):
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
-        for event in maj:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.mouvements["jump"] = True
-                    self.canMove["left"] = True
-                    self.canMove["right"] = True
-                if event.key == pygame.K_LEFT or event.key == pygame.K_q:
-                    self.mouvements["left"] = True
-                    self.canMove["right"] = True
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.mouvements["right"] = True
-                    self.canMove["left"] = True
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    self.mouvements["jump"] = False
-                if event.key == pygame.K_LEFT or event.key == pygame.K_q:
-                    self.mouvements["left"] = False
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.mouvements["right"] = False
+
+        # Lecture des touches (opti)
+        # On ajoute un délai entre les sauts
+        if keys[pygame.K_SPACE] and (time.time() - self.last_jump_time) > 0.3:
+            self.mouvements["jump"] = True
+            self.canMove["left"] = True
+            self.canMove["right"] = True
+            self.last_jump_time = time.time()
+        else:
+            self.mouvements["jump"] = False
+
+        self.mouvements["left"] = keys[pygame.K_LEFT] or keys[pygame.K_q]
+        self.mouvements["right"] = keys[pygame.K_RIGHT] or keys[pygame.K_d]
+
+        self.canMove["left"] = not self.mouvements["right"]
+        self.canMove["right"] = not self.mouvements["left"]
 
         # Par défaut, il est possible de bouger dans toutes les directions
         self.canMove = {"left": True, "right": True, "down": True, "up": True}

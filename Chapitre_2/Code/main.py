@@ -11,7 +11,7 @@ def start():
 
     # Gestion de l'écran
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    bg = pygame.image.load("map.jpg")
+    bg = pygame.image.load("../assets/map.jpg")
     rect = bg.get_rect()
 
     # Le titre de la fenêtre
@@ -47,7 +47,7 @@ def start():
     # On ajoute des obstacles correspondant aux bords de l'écran
     obstacles.append(pygame.Rect(-1, 0, 1, h))  # Gauche
     obstacles.append(pygame.Rect(w, 0, 1, h))  # Droite
-    
+
     running = True
 
     padding = 0
@@ -69,6 +69,11 @@ def start():
                 if event.key == pygame.K_ESCAPE:
                     leave()
                     return
+                if event.key == pygame.K_RETURN:
+                    joueur = Player()
+                    for tour in towers:
+                        tour.projectiles = []
+                    running = True
 
         if running:
             screen.fill((255, 255, 255))
@@ -97,7 +102,7 @@ def start():
             for trap in traps:
                 trap.update(screen, joueur, padding)
 
-            joueur.update(maj, screen, obstacles, padding)
+            joueur.update(pygame.key.get_pressed(), screen, obstacles, padding)
 
             pygame.display.update()
 
@@ -114,11 +119,9 @@ def start():
             # on devrait afficher au milieu de l'écran que la partie est finie
             font = pygame.font.SysFont("Arial", 72)
             text = font.render("Partie terminée", True, (128, 0, 0))
-            screen.blit(text,(320 - text.get_width() // 2, 240 - text.get_height() // 2))
-            
+            screen.blit(text, (320 - text.get_width() // 2, 240 - text.get_height() // 2))
+
             pygame.display.flip()
-            # leave()
-            # return
+
 
 start()
-
