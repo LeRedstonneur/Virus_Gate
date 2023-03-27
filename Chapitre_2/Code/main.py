@@ -36,9 +36,11 @@ def start():
 
     clock = pygame.time.Clock()
 
-    obstacles = [pygame.Rect(1000, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(900, 700, 50, 250)]
-    towers = [Tower("classique", -500, -500), Tower("degats_de_zone", -1000, -500)]
-    traps = [Trap(-750, -1000)]
+    obstacles = [pygame.Rect(1100, 950, 50, 50), pygame.Rect(0, 1010, 1920, 500), pygame.Rect(1000, 700, 50, 250), pygame.Rect(500, 950, 150, 50), 
+    pygame.Rect(660, 870, 60, 20), pygame.Rect(760, 790, 60, 20), pygame.Rect(860, 710, 60, 20), pygame.Rect(1400, 700, 250, 350), pygame.Rect(1300, 845, 60, 20),
+    pygame.Rect(1350, 935, 60, 20), pygame.Rect(1350, 760, 60, 20)]
+    towers = [Tower("classique", -600, -600), Tower("degats_de_zone", -1000, -500)]
+    traps = [Trap(-800, -1000)]
     # spikes = [Spike(-750, -1100)]
 
     # On récupère les informations de l'écran
