@@ -9,7 +9,7 @@ class Player:
         self.vitesse = 10  # La vitesse du déplacement horizontal
         self.vitesseVerticale = 0
         self.hauteur_de_saut = 22
-        self.gravite = 2
+        self.gravite = 3
         self.largeur = 30
         self.hauteur = 30
         self.vies_max = 5
