@@ -8,14 +8,14 @@ class Player:
         self.posy = -580
         self.vitesse = 10  # La vitesse du déplacement horizontal
         self.vitesseVerticale = 0
-        self.hauteur_de_saut = 25
-        self.gravite = 5
+        self.hauteur_de_saut = 22
+        self.gravite = 2
         self.largeur = 30
         self.hauteur = 30
         self.vies_max = 5
         self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
         self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
-        self.ralentissement = 0
+        self.ralentissement = 4
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
 
