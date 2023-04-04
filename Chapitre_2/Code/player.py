@@ -19,6 +19,8 @@ class Player:
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
         self.pieces = 0
+        self.pieces_validees = 0
+        self.checkpoint = 0
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
@@ -27,7 +29,7 @@ class Player:
 
         self.last_jump_time = time.time()
 
-    def update(self, keys, screen, obstacles, padding, pieces):
+    def update(self, keys, screen, obstacles, padding, pieces, checkpoints, piecesatrouver):
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
@@ -101,9 +103,24 @@ class Player:
         for piece in pieces:
             distance = ((-self.posx - piece[0])**2 + (-self.posy - piece[1])**2)**0.5
             if distance <= 50:
-                print("piece ramassée")
                 pieces.remove(piece)
                 self.pieces += 1
+
+        # Gestion des checkpoints
+        # print(pieces)
+
+        # On valide un nouveau checkpoint
+        if self.checkpoint < len(checkpoints) and pygame.Rect(checkpoints[self.checkpoint][0], checkpoints[self.checkpoint][1], 50, 50).colliderect(self.rectangle):
+            self.checkpoint += 1
+            self.pieces_validees = self.pieces
+            piecesatrouver.clear()
+            piecesatrouver.extend([i for i in pieces])
+
+        # En cas de retour sur le dernier checkpoint déjà validé, on sauvegarde quand même les pièces
+        if self.checkpoint > 0 and pygame.Rect(checkpoints[self.checkpoint - 1][0], checkpoints[self.checkpoint - 1][1], 50, 50).colliderect(self.rectangle):
+            self.pieces_validees = self.pieces
+            piecesatrouver.clear()
+            piecesatrouver.extend([i for i in pieces])
 
         # On ajoute le joueur sur l'écran
         if self.pause == 0:
@@ -114,6 +131,7 @@ class Player:
         # On dessine la barre de vie sur l'écran
         pygame.draw.rect(screen, 'GREEN', (1000, 1800, 80, 100))
         self.afficherVies()
+
         self.afficherPieces(screen)
 
     def surObstacle(self, obstacles) -> bool:

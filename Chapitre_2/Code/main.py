@@ -3,10 +3,7 @@ from player import Player
 from tower import Tower
 from trap import Trap
 from quit import leave
-from obstacles import obstacles
-from obstacles import towers
-from obstacles import traps
-from obstacles import spikes
+from obstacles import *
 from pieces import piecestemp
 
 
@@ -43,7 +40,8 @@ def start():
 
     # Les obstacles sont directement includes depuis obstacles.py
 
-    pieces = piecestemp
+    pieces = [i for i in piecestemp]  # Copie élément par élément 
+    piecesatrouver = [i for i in piecestemp]
 
     # On récupère les informations de l'écran
     screen_info = pygame.display.Info()
@@ -61,6 +59,8 @@ def start():
 
         maj = pygame.event.get()
 
+        # print(f"\nPiecesatrouver={piecesatrouver}\n")
+
         for event in maj:
             if event.type == pygame.QUIT:
                 leave()
@@ -74,12 +74,20 @@ def start():
                     leave()
                     return
                 if event.key == pygame.K_RETURN:
-                    joueur = Player()
-                    for tour in towers:
-                        tour.projectiles = []
-                    running = True
-                    pieces = piecestemp  # A faire : corriger ça (quand on appuie sur entrée ça ne reset pas les pièces)
-                    print("reset")
+                    if joueur.checkpoint == 0:
+                        joueur = Player()
+                        for tour in towers:
+                            tour.projectiles = []
+                        running = True
+                        pieces = [i for i in piecestemp]  # On remet la liste des pièces comme au départ
+                    else:
+                        joueur.posx = -checkpoints[joueur.checkpoint - 1][0]
+                        joueur.posy = -checkpoints[joueur.checkpoint - 1][1]
+                        for tour in towers:
+                            tour.projectiles = []
+                        joueur.vies = joueur.vies_max
+                        joueur.pieces = joueur.pieces_validees
+                        pieces = [i for i in piecesatrouver]
 
         if running:
             screen.fill((255, 255, 255))
@@ -94,8 +102,17 @@ def start():
                 temp = element.move(padding, 0)
                 pygame.draw.rect(screen, (0, 0, 0), temp)
 
+            # On affiche les pièces
             for element in pieces:
                 pygame.draw.circle(screen, (255, 255, 0), (element[0] + padding, element[1]), 25)
+
+            # On affiche les checkpoints validés
+            for element in range(joueur.checkpoint):
+                pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(checkpoints[element][0] + padding, checkpoints[element][1], 50, 50))
+
+            # On affiche les checkpoints à compléter
+            for element in range(joueur.checkpoint, len(checkpoints)):
+                pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(checkpoints[element][0] + padding, checkpoints[element][1], 50, 50))
 
             # On s'occupe des tours si le joueur n'a pas été touché
             if joueur.pause == 0:
@@ -107,7 +124,7 @@ def start():
                 joueur.pause -= 1
 
             joueur.ralentissement = 0
-            # On ralentit éventuellement le joueur
+            # On ralentit éventuellement le joueur en le prenant dans un trap
             for trap in traps:
                 trap.update(screen, joueur, padding)
             
@@ -115,7 +132,7 @@ def start():
                 spike.update(screen, joueur, padding)
             
 
-            joueur.update(pygame.key.get_pressed(), screen, obstacles, padding, pieces)
+            joueur.update(pygame.key.get_pressed(), screen, obstacles, padding, pieces, checkpoints, piecesatrouver)
 
             pygame.display.update()
 
