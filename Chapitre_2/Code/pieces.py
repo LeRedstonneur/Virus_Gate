@@ -1,3 +1,3 @@
 import pygame
 
-piecestemp = [(1000, 900), (1200, 800)]
+piecestemp = [(1025, 650), (3470, 510)]
