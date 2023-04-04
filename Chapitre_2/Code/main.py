@@ -6,7 +6,7 @@ from quit import leave
 from obstacles import obstacles
 from obstacles import towers
 from obstacles import traps
-# from obstacles import spikes
+from obstacles import spikes
 
 
 def start():
@@ -41,8 +41,6 @@ def start():
     clock = pygame.time.Clock()
 
     # Les obstacles sont directement includes depuis obstacles.py
-
-
 
     # On récupère les informations de l'écran
     screen_info = pygame.display.Info()
@@ -104,6 +102,10 @@ def start():
             # On ralentit éventuellement le joueur
             for trap in traps:
                 trap.update(screen, joueur, padding)
+            
+            for spike in spikes:
+                spike.update(screen, joueur, padding)
+            
 
             joueur.update(pygame.key.get_pressed(), screen, obstacles, padding)
 
