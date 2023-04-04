@@ -93,12 +93,12 @@ class Projectile:
                 if self.explosif:
                     # self.draw_circle_alpha(screen, (255, 0, 0, 100), (-self.posx, -self.posy), 50)
                     if calculs.distance(self.posx, self.posy, joueur.posx, joueur.posy) <= rayon:
-                        joueur.vies -= 1
+                        joueur.vies -= 2
                         self.to_delete = True
                         joueur.pause = 180
                 
         if pygame.Rect(-self.posx - self.cote / 2, -self.posy - self.cote / 2, self.cote, self.cote).colliderect(-joueur.posx, -joueur.posy, joueur.largeur, joueur.hauteur):
-            joueur.vies -= 1
+            joueur.vies -= 1 + int(self.explosif)
             self.to_delete = True
             joueur.pause = 180
 
@@ -106,7 +106,5 @@ class Projectile:
         """Source : https://stackoverflow.com/questions/6339057/draw-a-transparent-rectangles-and-polygons-in-pygame"""
         target_rect = pygame.Rect(center, (0, 0)).inflate((radius * 2, radius * 2))
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
-        pygame.draw.circle(shape_surf, color, (radius, radius), radius)
-        surface.blit(shape_surf, target_rect)
         pygame.draw.circle(shape_surf, color, (radius, radius), radius)
         surface.blit(shape_surf, target_rect)
