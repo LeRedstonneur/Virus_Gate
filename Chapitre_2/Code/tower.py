@@ -14,6 +14,10 @@ class Tower:
             self.range = 500
             self.reloadTime = 30
             self.bulletSpeed = 5
+        elif type == "sniper":
+            self.range = 500
+            self.reloadTime = 120
+            self.bulletSpeed = 20
         else:
             self.range = 500
             self.reloadTime = 60
@@ -40,6 +44,7 @@ class Tower:
                 self.tirer(self.posx, self.posy, player.posx - (player.largeur / 2), player.posy - (player.hauteur / 2), self.type == "degats_de_zone", padding)
             # On ajoute la tour sur l'écran
             pygame.draw.rect(screen, 'RED', (-self.posx - self.cote / 2 + padding, -self.posy - self.cote / 2, self.cote, self.cote))
+
         else:
             # print(calculs.distance(self.posx, self.posy, player.posx, player.posy))
             # On ajoute la tour sur l'écran
