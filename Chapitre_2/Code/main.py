@@ -73,7 +73,7 @@ def start():
                 if event.key == pygame.K_ESCAPE:
                     leave()
                     return
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN:  # Retour au checkpoint
                     if joueur.checkpoint == 0:
                         joueur = Player()
                         for tour in towers:
@@ -81,20 +81,21 @@ def start():
                         running = True
                         pieces = [i for i in piecestemp]  # On remet la liste des pièces comme au départ
                     else:
-                        joueur.posx = -checkpoints[joueur.checkpoint - 1][0]
-                        joueur.posy = -checkpoints[joueur.checkpoint - 1][1]
+                        joueur.posx = -checkpoints[joueur.checkpoint - 1][0] - 10
+                        joueur.posy = -checkpoints[joueur.checkpoint - 1][1] - 10
                         for tour in towers:
                             tour.projectiles = []
                         joueur.vies = joueur.vies_max
                         joueur.pieces = joueur.pieces_validees
                         pieces = [i for i in piecesatrouver]
+                        running = True
 
         if running:
             screen.fill((255, 255, 255))
             rect = rect.move(0, 0)
             screen.blit(bg, rect)
 
-            # On affiche la croix à l'écran
+            # On affiche la croix pour quitter à l'écran
             screen.blit(transparent_surface, rectangle_bouton)
 
             # On affiche les obstacles
@@ -114,7 +115,10 @@ def start():
             for element in range(joueur.checkpoint, len(checkpoints)):
                 pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(checkpoints[element][0] + padding, checkpoints[element][1], 50, 50))
 
-            # On s'occupe des tours si le joueur n'a pas été touché
+            # On affiche d'une couleur différente le dernier checkpoint (fin de la partie)
+            pygame.draw.rect(screen, (0, 255, 255), pygame.Rect(checkpoints[-1][0] + padding, checkpoints[-1][1], 50, 50))
+
+            # On actualise les tours si le joueur n'a pas été touché
             if joueur.pause == 0:
                 for tour in towers:
                     tour.update(screen, joueur, obstacles, padding)
@@ -136,20 +140,39 @@ def start():
 
             pygame.display.update()
 
+            # On s'occupe du défilement de la map (padding)
             if -joueur.posx < 750:
                 padding = 0
             else:
                 padding = joueur.posx + 750
 
+            # Si le joueur n'a plus de vies, on arrête le jeu
             if joueur.vies <= 0:
                 running = False
+                win = False
+            # Si le joueur a atteint le dernier checkpoint, il a gagné
+            if joueur.checkpoint == len(checkpoints):
+                running = False
+                win = True
+                joueur.checkpoint = 0
+
         else:
             # Si on arrive ici, c'est que la partie est finie
-
-            # on devrait afficher au milieu de l'écran que la partie est finie
             font = pygame.font.SysFont("Arial", 72)
-            text = font.render("Partie terminée", True, (128, 0, 0))
-            screen.blit(text, (320 - text.get_width() // 2, 240 - text.get_height() // 2))
+            font2 = pygame.font.SysFont("Arial", 36)
+            couleur = (200, 200, 200)  # La couleur des textes en petit
+            if win:
+                text = font.render("Vous avez gagné !", True, (100, 100, 255))
+                text2 = font2.render("Recommencer : Entrée", True, couleur)
+                text3 = font2.render("Quitter : Echap", True, couleur)
+            else:  
+                text = font.render("Vous êtes mort", True, (200, 0, 0))
+                text2 = font2.render("Checkpoint : Entrée", True, couleur)
+                text3 = font2.render("Quitter : Echap", True, couleur)
+                
+            screen.blit(text, (250, 250))
+            screen.blit(text2, (250, 400))
+            screen.blit(text3, (250, 450))
 
             pygame.display.flip()
 

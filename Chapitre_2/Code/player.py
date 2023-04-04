@@ -12,15 +12,15 @@ class Player:
         self.gravite = 3
         self.largeur = 30
         self.hauteur = 30
-        self.vies_max = 5
+        self.vies_max = 1
         self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
         self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
         self.ralentissement = 4
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
-        self.pieces = 0
-        self.pieces_validees = 0
-        self.checkpoint = 0
+        self.pieces = 0  # Les pièces ramassées par le joueur
+        self.pieces_validees = 0  # Les pièces ramassées par le joueur au dernier moment où il a été sur un checkpoint
+        self.checkpoint = 0  # Le numéro du checkpoint sur lequel le joueur est
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
@@ -92,22 +92,12 @@ class Player:
             self.posy = -1000
             self.vitesseVerticale = 0
 
-        # Gestion des obstacles
-        # for element in obstacles:
-        #     while pygame.Rect.colliderect(self.rectangle, element):
-        #         # self.posy += 10
-        #         self.canMove["right"] = False
-        #         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
-
         # Gestion des pièces
         for piece in pieces:
             distance = ((-self.posx - piece[0])**2 + (-self.posy - piece[1])**2)**0.5
             if distance <= 50:
                 pieces.remove(piece)
                 self.pieces += 1
-
-        # Gestion des checkpoints
-        # print(pieces)
 
         # On valide un nouveau checkpoint
         if self.checkpoint < len(checkpoints) and pygame.Rect(checkpoints[self.checkpoint][0], checkpoints[self.checkpoint][1], 50, 50).colliderect(self.rectangle):
