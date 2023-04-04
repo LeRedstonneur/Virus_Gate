@@ -1,5 +1,8 @@
 import pygame
 import math
+import time
+
+
 
 class TowerDefense(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
@@ -12,6 +15,7 @@ class TowerDefense(pygame.sprite.Sprite):
         self.target = None
         self.range = 0
         self.mouse_down = False
+        self.range_offset = self.rect.width / 2
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -24,40 +28,63 @@ class TowerDefense(pygame.sprite.Sprite):
                 closest_distance = speed
                 self.target = enemy
 
-    def slow(self, factor):
-        if self.target:
-            self.target.slow(factor)
-            
     def in_range(self, enemy):
-        speed = ((self.x - enemy.rect.x) ** 2 + (self.y - enemy.rect.y) ** 2) ** 0.5
-        return speed <= self.range
+        dx = self.rect.centerx - enemy.rect.centerx
+        dy = self.rect.centery - enemy.rect.centery
+        distance = math.sqrt(dx*dx + dy*dy) + self.range_offset  # addition du range_offset
+        return distance <= self.range
+
 
     def sell(self):
         #money += price*70/100
         del self
-    
-          
+
 
 class SquareTower(TowerDefense):
     def __init__(self, x, y, image, level):
         TowerDefense.__init__(self, x, y, image)
         self.level = level
+        self.cooldown = 1
+        self.last_attack_time = 0  # temps de la dernière attaque en secondes
         self.update_stats()
+        self.damage = 2
 
     def update_stats(self):
-        self.range = 100 + (10 * self.level)
+        self.range = 200 + (10 * self.level)
         self.slowing_factor = self.level * 0.1
 
-    def attack(self):
+    def slow(self, factor):
         if self.target:
-            self.target.take_damage(2)
-            self.slow(self.slowing_factor)
-            self.target = None
+            self.target.slow(factor)
+
+    def attack_animation(self,screen_to_blit):
+
+        reduction = (self.range - 100) / 2
+        pygame.draw.rect(screen_to_blit,(255, 0, 0), (self.x-int(reduction), self.y-int(reduction), self.range, self.range),width=5)
+        
+    def attack(self, enemy, screen):
+        current_time = time.time()  
+        elapsed_time = current_time - self.last_attack_time  
+        if elapsed_time >= self.cooldown:  # si le temps écoulé est supérieur ou égal au temps de recharge
+            if self.in_range(enemy):
+                enemy.health -= self.damage
+                elapsed_time = 0
+                self.last_attack_time = time.time()  # mettre à jour le temps de la dernière attaque
+                self.attack_animation(screen)
+                print('attaque')
+                
+                return True  # l'attaque a réussi
+        return False  # l'attaque n'a pas pu être effectuée (cooldown en cours)
     
     def draw_range(self, screen):
         if self.mouse_down:
-            pygame.draw.rect(screen, (0, 255, 255), (self.x-5, self.y-5, 110, 110))
-            
+            reduction = (self.range - 100) / 2
+            pygame.draw.rect(screen, (0, 255, 255), (self.x-int(reduction), self.y-int(reduction), self.range, self.range),width=5)
+    
+    
+    
+
+
 class RoundTower(TowerDefense):
     def __init__(self, x, y, image, level):
         TowerDefense.__init__(self, x, y, image)
@@ -89,8 +116,9 @@ class Enemy(pygame.sprite.Sprite):
         self.path = [(600, 50), (50, 50), (50, 600), (400, 600), (400, 300), (700, 300), (700, 850)]
         self.current_checkpoint = 0
         self.destination = self.path[self.current_checkpoint]
-        self.speed = 10
+        self.speed = 1
         self.has_traversed = False 
+        self.health = 5
         
     def update(self):
         # calculer la distance et la direction vers la destination actuelle
@@ -123,9 +151,13 @@ class Enemy(pygame.sprite.Sprite):
 
     def is_dead(self):
         return self.health <= 0
+        del self
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+    
+    def get_pos(self):
+        return self.x, self.y
 
 class Base():
     def __init__(self, x, y, image):
