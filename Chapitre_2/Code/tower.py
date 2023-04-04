@@ -17,7 +17,7 @@ class Tower:
         elif type == "sniper":
             self.range = 500
             self.reloadTime = 120
-            self.bulletSpeed = 20
+            self.bulletSpeed = 18
         else:
             self.range = 500
             self.reloadTime = 60
@@ -106,5 +106,7 @@ class Projectile:
         """Source : https://stackoverflow.com/questions/6339057/draw-a-transparent-rectangles-and-polygons-in-pygame"""
         target_rect = pygame.Rect(center, (0, 0)).inflate((radius * 2, radius * 2))
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
+        pygame.draw.circle(shape_surf, color, (radius, radius), radius)
+        surface.blit(shape_surf, target_rect)
         pygame.draw.circle(shape_surf, color, (radius, radius), radius)
         surface.blit(shape_surf, target_rect)
