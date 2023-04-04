@@ -18,6 +18,7 @@ class Player:
         self.ralentissement = 4
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
+        self.pieces = 0
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
@@ -26,9 +27,10 @@ class Player:
 
         self.last_jump_time = time.time()
 
-    def update(self, keys, screen, obstacles, padding):
+    def update(self, keys, screen, obstacles, padding, pieces):
         self.speed = int(self.vitesse * (1 - self.ralentissement))
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
+        self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
 
         # Lecture des touches (opti)
         # On ajoute un délai entre les sauts
@@ -89,11 +91,19 @@ class Player:
             self.vitesseVerticale = 0
 
         # Gestion des obstacles
-        for element in obstacles:
-            while pygame.Rect.colliderect(self.rectangle, element):
-                # self.posy += 10
-                self.canMove["right"] = False
-                self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
+        # for element in obstacles:
+        #     while pygame.Rect.colliderect(self.rectangle, element):
+        #         # self.posy += 10
+        #         self.canMove["right"] = False
+        #         self.rectangle = pygame.Rect(-self.posx, -self.posy, self.largeur, self.hauteur)
+
+        # Gestion des pièces
+        for piece in pieces:
+            distance = ((-self.posx - piece[0])**2 + (-self.posy - piece[1])**2)**0.5
+            if distance <= 50:
+                print("piece ramassée")
+                pieces.remove(piece)
+                self.pieces += 1
 
         # On ajoute le joueur sur l'écran
         if self.pause == 0:
@@ -104,6 +114,7 @@ class Player:
         # On dessine la barre de vie sur l'écran
         pygame.draw.rect(screen, 'GREEN', (1000, 1800, 80, 100))
         self.afficherVies()
+        self.afficherPieces(screen)
 
     def surObstacle(self, obstacles) -> bool:
         joueur_rect = pygame.Rect(-self.posx, -self.posy + 1, self.largeur, self.hauteur)
@@ -162,3 +173,12 @@ class Player:
         rect_rouge = pygame.Rect(position_rect_rouge, (largeur_rect_rouge, hauteur_rect_rouge))
         pygame.draw.rect(pygame.display.get_surface(), (0, 255, 0), rect_vert)
         pygame.draw.rect(pygame.display.get_surface(), (255, 0, 0), rect_rouge)
+
+    def afficherPieces(self, screen):
+        """Affiche le nombre de pièces collectées sur l'écran"""
+        x, y = pygame.display.get_surface().get_size()
+
+        texte = pygame.font.SysFont("Arial", 72).render(str(self.pieces), True, (255, 255, 255))
+        screen.blit(texte, (x - 150, 35))
+
+        pygame.draw.circle(screen, (255, 255, 0), (x - 40, 70), 25)

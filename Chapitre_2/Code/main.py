@@ -7,6 +7,7 @@ from obstacles import obstacles
 from obstacles import towers
 from obstacles import traps
 from obstacles import spikes
+from pieces import piecestemp
 
 
 def start():
@@ -42,6 +43,8 @@ def start():
 
     # Les obstacles sont directement includes depuis obstacles.py
 
+    pieces = piecestemp
+
     # On récupère les informations de l'écran
     screen_info = pygame.display.Info()
     h, w = screen_info.current_h, screen_info.current_w
@@ -75,6 +78,8 @@ def start():
                     for tour in towers:
                         tour.projectiles = []
                     running = True
+                    pieces = piecestemp  # A faire : corriger ça (quand on appuie sur entrée ça ne reset pas les pièces)
+                    print("reset")
 
         if running:
             screen.fill((255, 255, 255))
@@ -88,6 +93,9 @@ def start():
             for element in obstacles:
                 temp = element.move(padding, 0)
                 pygame.draw.rect(screen, (0, 0, 0), temp)
+
+            for element in pieces:
+                pygame.draw.circle(screen, (255, 255, 0), (element[0] + padding, element[1]), 25)
 
             # On s'occupe des tours si le joueur n'a pas été touché
             if joueur.pause == 0:
@@ -107,7 +115,7 @@ def start():
                 spike.update(screen, joueur, padding)
             
 
-            joueur.update(pygame.key.get_pressed(), screen, obstacles, padding)
+            joueur.update(pygame.key.get_pressed(), screen, obstacles, padding, pieces)
 
             pygame.display.update()
 
