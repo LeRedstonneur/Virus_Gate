@@ -12,7 +12,7 @@ class Player:
         self.gravite = 3
         self.largeur = 30
         self.hauteur = 30
-        self.vies_max = 1
+        self.vies_max = 5
         self.vies = self.vies_max  # Au début, le joueur commence avec toutes ses vies
         self.pause = 0  # Quand le joueur est touché, plus aucune tour ne tire pendant une certaine durée
         self.ralentissement = 4
@@ -120,6 +120,9 @@ class Player:
 
         # On dessine la barre de vie sur l'écran
         pygame.draw.rect(screen, 'GREEN', (1000, 1800, 80, 100))
+        font = pygame.font.SysFont("Arial", 36)
+        text = font.render(f"{self.vies}/{self.vies_max}", True, (255, 255, 255))
+        screen.blit(text, (1650, 1038))
         self.afficherVies()
 
         self.afficherPieces(screen)
@@ -128,7 +131,6 @@ class Player:
         joueur_rect = pygame.Rect(-self.posx, -self.posy + 1, self.largeur, self.hauteur)
         for obstacle in obstacles:
             if joueur_rect.colliderect(pygame.Rect(obstacle[0], obstacle[1], obstacle[2], obstacle[3])):
-                # print("sur obstacle")
                 self.canMove["down"] = False
                 return True
         return False

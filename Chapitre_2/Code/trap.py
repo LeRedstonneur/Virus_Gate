@@ -18,7 +18,6 @@ class Trap:
             # On ajoute la tour sur l'écran
             pygame.draw.rect(screen, 'RED', (-self.posx - self.cote / 2 + padding, -self.posy - self.cote / 2, self.cote, self.cote))
         else:
-            # print(calculs.distance(self.posx, self.posy, player.posx, player.posy))
             # On ajoute la tour sur l'écran
             pygame.draw.rect(screen, 'GREEN', (-self.posx - self.cote / 2 + padding, -self.posy - self.cote / 2, self.cote, self.cote))
         

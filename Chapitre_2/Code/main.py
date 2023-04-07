@@ -59,8 +59,6 @@ def start():
 
         maj = pygame.event.get()
 
-        # print(f"\nPiecesatrouver={piecesatrouver}\n")
-
         for event in maj:
             if event.type == pygame.QUIT:
                 leave()
@@ -119,12 +117,9 @@ def start():
             pygame.draw.rect(screen, (0, 255, 255), pygame.Rect(checkpoints[-1][0] + padding, checkpoints[-1][1], 50, 50))
 
             # On actualise les tours si le joueur n'a pas été touché
-            if joueur.pause == 0:
-                for tour in towers:
-                    tour.update(screen, joueur, obstacles, padding)
-            else:
-                for tour in towers:
-                    tour.update(screen, joueur, obstacles, padding, pause=True)
+            for tour in towers:
+                tour.update(screen, joueur, obstacles, padding, pause=(joueur.pause!=0))
+            if joueur.pause > 0:
                 joueur.pause -= 1
 
             joueur.ralentissement = 0
@@ -165,14 +160,28 @@ def start():
                 text = font.render("Vous avez gagné !", True, (100, 100, 255))
                 text2 = font2.render("Recommencer : Entrée", True, couleur)
                 text3 = font2.render("Quitter : Echap", True, couleur)
+
+                def color_from_float(f):
+                    if f == 0:
+                        return (255, 0, 0)  # rouge
+                    elif f == 1:
+                        return (0, 255, 0)  # vert
+                    else:
+                        r = int((1-f)*255)  # rouge (max à 255 si f = 0)
+                        g = int(f*255)      # vert (max à 255 si f = 1)
+                        return (r, g, 0)    # jaune si f = 0.5
+
+                text4 = font2.render(f"Pièces : {joueur.pieces}/{len(piecestemp)}", True, color_from_float(joueur.pieces/len(piecestemp)))
             else:  
                 text = font.render("Vous êtes mort", True, (200, 0, 0))
                 text2 = font2.render("Checkpoint : Entrée", True, couleur)
                 text3 = font2.render("Quitter : Echap", True, couleur)
+                text4 = font2.render(f"Progression : {joueur.checkpoint}/{len(checkpoints)}", True, (100, 100, 100))
                 
             screen.blit(text, (250, 250))
-            screen.blit(text2, (250, 400))
-            screen.blit(text3, (250, 450))
+            screen.blit(text2, (250, 450))
+            screen.blit(text3, (250, 500))
+            screen.blit(text4, (250, 400))
 
             pygame.display.flip()
 
