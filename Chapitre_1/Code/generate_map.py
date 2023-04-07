@@ -2,6 +2,7 @@ import pygame
 from  all import Base
 
 width,height = 600,500
+pygame.display.set_caption("Neon TD : BEST GAME OF 2004")
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 
 dico_map={
@@ -162,11 +163,11 @@ while value :
             pygame.quit()
             quit()
         elif event.type == pygame.VIDEORESIZE:
-            width, height = event.w, event.h
-            pygame.display.set_caption("Resizable Window: {} x {}".format(width, height))
-            size=(width//max[0],height//max[1])
+            size=(event.w//max[0],event.h//max[1])
+            bases = generate_bases(matrice)
 
         if event.type == pygame.MOUSEBUTTONUP and bool(bases): #et la liste pour les socles non vide
+            # A faire : si on clique quelque part, pour chaque base non cliquée on passe son attribut "choice" à False
             mouse_pos = pygame.mouse.get_pos()
             print(mouse_pos)
             for base in bases :
@@ -174,6 +175,13 @@ while value :
                     print("True")
                     base.choice = True
             print("------")
+        for base in bases:
+            if base.choice:
+                base.update(screen, event)  # Si une base est choisie, on l'update pour qu'elle se gère
+    for base in bases :
+        if base.choice == True :
+            base.chose(screen,[square,circle,triangle,trapeze])
+
     
     pygame.display.flip()
 
