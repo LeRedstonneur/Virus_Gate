@@ -1,4 +1,5 @@
 import pygame
+from  all import Base
 
 width,height = 600,500
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
@@ -27,6 +28,12 @@ dico_map={
     "ANvW" :pygame.image.load("./map/angle_north_west.png")
 }
 
+square   = pygame.image.load ("./towers/square.png")
+circle   = pygame.image.load ("./towers/circle.png")
+triangle = pygame.image.load ("./towers/triangle.png")
+trapeze  = pygame.image.load ("./towers/trapeze.png") 
+
+
 class EmptyFile(Exception):
     pass
 
@@ -38,23 +45,69 @@ def read(fichier):
     else :
         return contenu
 
-def generate_map(content,size):
-    x = 0
-    y = 0
+def next(content: str,index: int,lenght: int) -> tuple:
+    """Donne l'élement suivant et son index pour un index donnée dans une chaine de caractères"""
+    s = ""
+    if content[index]=="\n":
+        return "\n",index+1
+    else :
+        while index<lenght and content[index]!="-" :
+            s += content[index]
+            index += 1
+        return s,index
+
+def generate_map(content) -> list:
+    """crée une matrice composé des codes de chaque tuiles"""
+    matrice = []
+    liste =[]
     lenght = len(content)
     index = 1
     while index < lenght:
         id,index=next(content,index,lenght)
         index+=1
         if id == "\n" :
-            y += size[1]
-            x = 0
-        elif id == "0000" :
-            x+=size[0]
+            matrice.append(liste)
+            liste=[]
         else :
-            screen.blit(pygame.transform.scale(dico_map[id], size),(x,y))
+            liste.append(id)
+    matrice.append(liste)
+    return matrice
+
+def generate_bases(matrice) :
+    """retourne la liste des bases"""
+    bases = []
+    y = 0
+    for ligne in matrice :
+        x = 0
+        for id in ligne :
+            if id == "B000":
+                bases.append(Base(x,y,"./map/base.png",size[0],size[1]))
             x += size[0]
-    
+        y += size[1]
+    return bases
+
+def print_map(content,size):
+    y = 0
+    for ligne in matrice :
+        x = 0
+        for id in ligne :
+            if id != "0000":
+                screen.blit(pygame.transform.scale(dico_map[id], size),(x,y))
+            x += size[0]
+        y += size[1]
+
+
+
+def pointer_to_base(pointer) -> int:
+    """Retourne l'indice dans la liste des bases se situant aux coordonnées passées en paramètre"""
+    pass    
+
+def affiche(b) :
+    print(f"x : {b.x}")
+    print(f"y : {b.y}")
+    print(f"x rect :{b.rect.x}")
+    print(f"y rect :{b.rect.y}")
+    print("------")
 
 def max_line(content):
     max_len = 0
@@ -77,21 +130,18 @@ def max_line(content):
     return max_len, coulumn
     
 
-def next(content,index,lenght):
-    str=""
-    if content[index]=="\n":
-        return "\n",index+1
-    else :
-        while index<lenght and content[index]!="-" :
-            str+=content[index]
-            index+=1
-        return str,index
+
+
 
 
 try :
     content=read("./map/map.txt")
     value = True
     max = max_line(content)
+    size=(width//max[0],height//max[1]) #taille d'un rectangle
+    matrice=generate_map(content)
+    del content
+    bases = generate_bases(matrice)
 
 except EmptyFile :
     print("File was found to be empty")
@@ -102,8 +152,11 @@ except FileNotFoundError :
     value = False
 
 
+
 while value :
-    generate_map(content,(width//max[0],height//max[1]))
+    screen.fill((255,255,255))
+    print_map(matrice,size)
+    # affiche(bases[0])
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -111,4 +164,19 @@ while value :
         elif event.type == pygame.VIDEORESIZE:
             width, height = event.w, event.h
             pygame.display.set_caption("Resizable Window: {} x {}".format(width, height))
+            size=(width//max[0],height//max[1])
+
+        if event.type == pygame.MOUSEBUTTONUP and bool(bases): #et la liste pour les socles non vide
+            mouse_pos = pygame.mouse.get_pos()
+            print(mouse_pos)
+            for base in bases :
+                if base.rect.collidepoint(mouse_pos):
+                    print("True")
+                    base.choice = True
+            print("------")
+    
     pygame.display.flip()
+
+
+
+
