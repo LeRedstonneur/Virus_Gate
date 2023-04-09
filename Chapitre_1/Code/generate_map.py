@@ -1,38 +1,42 @@
 import pygame
-from  all import Base
+from  class_enzo import Base
+from os import getcwd
 
 width,height = 600,500
 pygame.display.set_caption("Neon TD : BEST GAME OF 2004")
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 
-dico_map={
-    "B000" :pygame.image.load("./map/base.png"),
-    "S0vE" :pygame.image.load("./map/spawnMob_east.png"),
-    "S0vN" :pygame.image.load("./map/spawnMob_north.png"),
-    "S0vW" :pygame.image.load("./map/spawnMob_west.png"),
-    "S0vS" :pygame.image.load("./map/spawnMob_south.png"),
-    "PEvW" :pygame.image.load("./map/path_east_west.png"),
-    "PWvE" :pygame.image.load("./map/path_west_east.png"),
-    "PNvS" :pygame.image.load("./map/path_north_south.png"),
-    "PSvN" :pygame.image.load("./map/path_south_north.png"),
-    "C0vE" :pygame.image.load("./map/core_east.png"),
-    "C0vN" :pygame.image.load("./map/core_north.png"),
-    "C0vW" :pygame.image.load("./map/core_west.png"),
-    "C0vS" :pygame.image.load("./map/core_south.png"),
-    "AWvN" :pygame.image.load("./map/angle_west_north.png"),
-    "AWvS" :pygame.image.load("./map/angle_west_south.png"),
-    "AEvS" :pygame.image.load("./map/angle_east_south.png"),
-    "AEvN" :pygame.image.load("./map/angle_east_north.png"),
-    "ASvE" :pygame.image.load("./map/angle_south_east.png"),
-    "ASvW" :pygame.image.load("./map/angle_south_west.png"),
-    "ANvE" :pygame.image.load("./map/angle_north_east.png"),
-    "ANvW" :pygame.image.load("./map/angle_north_west.png")
+# Obtient le répertoire de travail actuel et le concaténe  avec un string pour obtener le chemin d'accés au assets
+path_assets = getcwd() + "\\Assets"
+
+dico_tiles={
+    "B000" :pygame.image.load(path_assets+"\\tiles\\base.png"),
+    "S0vE" :pygame.image.load(path_assets+"\\tiles\\mob_spawners\\mobSpawner_east.png"),
+    "S0vN" :pygame.image.load(path_assets+"\\tiles\\mob_spawners\\mobSpawner_north.png"),
+    "S0vW" :pygame.image.load(path_assets+"\\tiles\\mob_spawners\\mobSpawner_west.png"),
+    "S0vS" :pygame.image.load(path_assets+"\\tiles\\mob_spawners\\mobSpawner_south.png"),
+    "PEvW" :pygame.image.load(path_assets+"\\tiles\\paths\\path_east_west.png"),
+    "PWvE" :pygame.image.load(path_assets+"\\tiles\\paths\\path_west_east.png"),
+    "PNvS" :pygame.image.load(path_assets+"\\tiles\\paths\\path_north_south.png"),
+    "PSvN" :pygame.image.load(path_assets+"\\tiles\\paths\\path_south_north.png"),
+    "C0vE" :pygame.image.load(path_assets+"\\tiles\\cores\\core_east.png"),
+    "C0vN" :pygame.image.load(path_assets+"\\tiles\\cores\\core_north.png"),
+    "C0vW" :pygame.image.load(path_assets+"\\tiles\\cores\\core_west.png"),
+    "C0vS" :pygame.image.load(path_assets+"\\tiles\\cores\\core_south.png"),
+    "AWvN" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_west_north.png"),
+    "AWvS" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_west_south.png"),
+    "AEvS" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_east_south.png"),
+    "AEvN" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_east_north.png"),
+    "ASvE" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_south_east.png"),
+    "ASvW" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_south_west.png"),
+    "ANvE" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_north_east.png"),
+    "ANvW" :pygame.image.load(path_assets+"\\tiles\\angles\\angle_north_west.png")
 }
 
-square   = pygame.image.load ("./towers/square.png")
-circle   = pygame.image.load ("./towers/circle.png")
-triangle = pygame.image.load ("./towers/triangle.png")
-trapeze  = pygame.image.load ("./towers/trapeze.png") 
+square   = pygame.image.load (path_assets+"\\towers\\square.png")
+circle   = pygame.image.load (path_assets+"\\towers\\circle.png")
+triangle = pygame.image.load (path_assets+"\\towers\\triangle.png")
+trapeze  = pygame.image.load (path_assets+"\\towers\\trapeze.png") 
 
 
 class EmptyFile(Exception):
@@ -82,7 +86,7 @@ def generate_bases(matrice) :
         x = 0
         for id in ligne :
             if id == "B000":
-                bases.append(Base(x,y,"./map/base.png",size[0],size[1]))
+                bases.append(Base(x,y,".\\map\\base.png",size[0],size[1]))
             x += size[0]
         y += size[1]
     return bases
@@ -93,15 +97,10 @@ def print_map(content,size):
         x = 0
         for id in ligne :
             if id != "0000":
-                screen.blit(pygame.transform.scale(dico_map[id], size),(x,y))
+                screen.blit(pygame.transform.scale(dico_tiles[id], size),(x,y))
             x += size[0]
         y += size[1]
 
-
-
-def pointer_to_base(pointer) -> int:
-    """Retourne l'indice dans la liste des bases se situant aux coordonnées passées en paramètre"""
-    pass    
 
 def affiche(b) :
     print(f"x : {b.x}")
@@ -132,14 +131,14 @@ def max_line(content):
     
 
 
-
-
+print(path_assets+"\\tiles\\angles\\angle_north_west.png")
+print(path_assets+"\\map.txt")
 
 try :
-    content=read("./map/map.txt")
+    content=read(path_assets+"\\map.txt")
     value = True
     max = max_line(content)
-    size=(width//max[0],height//max[1]) #taille d'un rectangle
+    size=(width//max[0],height//max[1]) #taille d'un rectangle de la grille
     matrice=generate_map(content)
     del content
     bases = generate_bases(matrice)
