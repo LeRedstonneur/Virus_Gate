@@ -82,11 +82,11 @@ def generate_bases(matrice) :
     """retourne la liste des bases"""
     bases = []
     y = 0
-    for ligne in matrice :
+    for list_index,ligne in enumerate(matrice) :
         x = 0
-        for id in ligne :
+        for ele_index,id in enumerate(ligne) :
             if id == "B000":
-                bases.append(Base(x,y,".\\map\\base.png",size[0],size[1]))
+                bases.append(Base(x,y,path_assets+"\\tiles\\base.png",size[0],size[1],(ele_index,list_index)))
             x += size[0]
         y += size[1]
     return bases
@@ -107,6 +107,9 @@ def affiche(b) :
     print(f"y : {b.y}")
     print(f"x rect :{b.rect.x}")
     print(f"y rect :{b.rect.y}")
+    print(f"dim : {b.dimensions}")
+    print(f"choice : {b.choice}")
+    print(b.ratio)
     print("------")
 
 def max_line(content):
@@ -131,15 +134,13 @@ def max_line(content):
     
 
 
-print(path_assets+"\\tiles\\angles\\angle_north_west.png")
-print(path_assets+"\\map.txt")
-
 try :
     content=read(path_assets+"\\map.txt")
     value = True
     max = max_line(content)
     size=(width//max[0],height//max[1]) #taille d'un rectangle de la grille
     matrice=generate_map(content)
+    print(matrice)
     del content
     bases = generate_bases(matrice)
 
@@ -156,32 +157,27 @@ except FileNotFoundError :
 while value :
     screen.fill((255,255,255))
     print_map(matrice,size)
-    # affiche(bases[0])
+    #affiche(bases[0])
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
         elif event.type == pygame.VIDEORESIZE:
             size=(event.w//max[0],event.h//max[1])
-            bases = generate_bases(matrice)
+            for base in bases :
+                base.resize(size)
+            affiche(bases[0])
 
         if event.type == pygame.MOUSEBUTTONUP and bool(bases): #et la liste pour les socles non vide
             # A faire : si on clique quelque part, pour chaque base non cliquée on passe son attribut "choice" à False
             mouse_pos = pygame.mouse.get_pos()
-            print(mouse_pos)
             for base in bases :
-                if base.rect.collidepoint(mouse_pos):
-                    print("True")
-                    base.choice = True
-            print("------")
-        for base in bases:
-            if base.choice:
-                base.update(screen, event)  # Si une base est choisie, on l'update pour qu'elle se gère
+                base.update(mouse_pos)
+            
+                    
     for base in bases :
         if base.choice == True :
-            base.chose(screen,[square,circle,triangle,trapeze])
-
-    
+            base.chose(screen,[square,circle,triangle,trapeze]) 
     pygame.display.flip()
 
 
