@@ -2,7 +2,7 @@ import pygame
 print(pygame.ver)
 import sys
 sys.path.insert(0, '..')
-#import Chapitre_2.Code.main as cp2
+import Chapitre_2.Code.main as cp2
 
 pygame.init()
 pygame.mixer.init()
@@ -214,7 +214,7 @@ def afficher_menu():
                     running = False
                 elif button2.is_clicked(event.pos):
                     print("Niveau 2")
-                    #cp2.start()
+                    cp2.start()
                     in_menu = False
                     running = False
 
