@@ -1,7 +1,7 @@
 import pygame
-from tower import Tower
-from trap import Trap
-from spike import Spike
+from Chapitre_2.Code.tower import Tower
+from Chapitre_2.Code.trap import Trap
+from Chapitre_2.Code.spike import Spike
 
 obstacles = [pygame.Rect(1100, 950, 50, 50), pygame.Rect(0, 1010, 3100, 500), pygame.Rect(1000, 700, 50, 250), pygame.Rect(500, 950, 150, 50), 
 pygame.Rect(660, 870, 60, 20), pygame.Rect(760, 790, 60, 20), pygame.Rect(860, 710, 60, 20), pygame.Rect(1400, 700, 250, 350), pygame.Rect(1300, 845, 60, 20),
