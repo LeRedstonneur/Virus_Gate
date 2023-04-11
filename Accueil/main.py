@@ -1,5 +1,7 @@
 import pygame
-print(pygame.ver)
+import sys
+sys.path.insert(0, '..')
+import Chapitre_2.Code.main as cp2
 
 pygame.init()
 pygame.mixer.init()
@@ -217,6 +219,9 @@ while running:
                     in_menu = False
                 elif quitter.is_clicked(event.pos): # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
                     running = False
+                elif button2.is_clicked(event.pos):
+                    pygame.quit()
+                    cp2.start()
     if in_options :
         afficher_options()
     elif in_menu :
