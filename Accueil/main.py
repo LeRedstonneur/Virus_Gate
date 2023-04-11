@@ -2,7 +2,7 @@ import pygame
 print(pygame.ver)
 import sys
 sys.path.insert(0, '..')
-import Chapitre_2.Code.main as cp2
+#import Chapitre_2.Code.main as cp2
 
 pygame.init()
 pygame.mixer.init()
@@ -27,10 +27,11 @@ options_bg_y = (screen_height - options_bg_height) // 2
 
 
 # Définir les couleurs
-WHITE = (255, 255, 255)
+WHITE = (200, 200, 200)
 BLACK = (0, 0, 0)
-GRAY = (128, 128, 128)
+GRAY = (140, 140, 140)
 BLUE_HACKER = (45, 53, 82)
+GREEN = (0, 220, 0)
 
 # Définir la police et la taille de la police
 font = pygame.font.Font(None, 36)
@@ -100,7 +101,7 @@ class Barre:
         self.curseur_y = self.y
 
         self.surface = pygame.Surface((width, height))
-        self.surface.fill((0, 255, 0)) # couleur verte
+        self.surface.fill(GREEN)
         self.rect = self.surface.get_rect(topleft=(self.x, self.y))
 
         self.curseur_surface = pygame.Surface((15, height))
@@ -111,10 +112,10 @@ class Barre:
         return self.rect.collidepoint(mouse_pos)
 
 # Définir la barre du volume avec son curseur
-barre_volume = Barre(1000, 50, screen_width / 15, screen_height / 4, int(volume_bande_son_accueil * 1000))
+barre_volume = Barre(1000, 50, screen_width / 15, screen_height / 4 + 100, int(volume_bande_son_accueil * 1000))
 
 # Définir la barre des effets sonores avec son curseur
-barre_effets = Barre(1000, 50, screen_width / 15, screen_height / 2, int(volume_bande_son_accueil * 1000))
+barre_lumi = Barre(1000, 50, screen_width / 15, screen_height / 2 + 100, int(screen_width / 15 + 740))
 
 def afficher_options():
     global in_menu, in_options, running
@@ -138,7 +139,6 @@ def afficher_options():
                     if retour.is_clicked(event.pos):
                         in_options = False
                         in_menu = True
-
                     if quitter.is_clicked(event.pos):
                         pygame.quit()
                         quit()
@@ -148,6 +148,13 @@ def afficher_options():
                         # Régler le volume de la bande son en fonction de la position du curseur
                         volume_bande_son_accueil = ((event.pos[0] - (barre_volume.x)) / 1000)
                         son_accueil.set_volume(volume_bande_son_accueil)
+                        barre_volume.curseur_x = int((barre_volume.x) + volume_bande_son_accueil * 1000)
+
+                    # Vérifier si l'utilisateur a cliqué sur la barre de progression du volume de la luminosité
+                    if barre_lumi.is_clicked(event.pos):
+                        # Régler la luminosité en fonction de la position du curseur
+                        pygame.display.set_gamma((event.pos[0]+180)/ 1000)
+                        barre_lumi.curseur_x = event.pos[0]
 
         # Afficher l'image de fond
         screen.blit(options_bg, (options_bg_x, options_bg_y))
@@ -157,25 +164,31 @@ def afficher_options():
         screen.blit(retour.surface, retour.rect)
 
         # Afficher le titre "Options"
-        font = pygame.font.Font("freesansbold.ttf", 50)
-        titre_surface = font.render("Options", True, GRAY)
+        font = pygame.font.Font("freesansbold.ttf", 100)
+        titre_surface = font.render("Options", True, WHITE)
         titre_rect = titre_surface.get_rect(center=(screen_width / 2, screen_height / 8))
         screen.blit(titre_surface, titre_rect)
 
+        font = pygame.font.Font("freesansbold.ttf", 50)
         # Afficher le texte "Volume de la bande son"
         texte_volume_bande_son = font.render("Volume de la bande son", True, GRAY)
-        texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4 - 100))
+        texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4))
         screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
+
+        # Afficher le texte "Luminosité de l'écran"
+        texte_lumi = font.render("Luminosité de l'écran", True, GRAY)
+        texte_lumi_rect = texte_lumi.get_rect(topleft=(screen_width / 14, screen_height / 2))
+        screen.blit(texte_lumi, texte_lumi_rect)
 
         # Afficher les barres de réglages
         screen.blit(barre_volume.surface, barre_volume.rect)
-        screen.blit(barre_effets.surface, barre_effets.rect)
+        screen.blit(barre_lumi.surface, barre_lumi.rect)
 
         # Afficher le curseur à propos du volume
-        barre_volume.curseur_x = int((barre_volume.x) + volume_bande_son_accueil * 1000)
         barre_volume.curseur_rect = barre_volume.curseur_surface.get_rect(topleft=(barre_volume.curseur_x, barre_volume.curseur_y))
+        barre_lumi.curseur_rect = barre_lumi.curseur_surface.get_rect(topleft=(barre_lumi.curseur_x, barre_lumi.curseur_y))
         screen.blit(barre_volume.curseur_surface, barre_volume.curseur_rect)
-        screen.blit(barre_effets.curseur_surface, barre_effets.curseur_rect)
+        screen.blit(barre_lumi.curseur_surface, barre_lumi.curseur_rect)
 
         pygame.display.update()
 
@@ -201,7 +214,7 @@ def afficher_menu():
                     running = False
                 elif button2.is_clicked(event.pos):
                     print("Niveau 2")
-                    cp2.start()
+                    #cp2.start()
                     in_menu = False
                     running = False
 
