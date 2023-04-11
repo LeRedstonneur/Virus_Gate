@@ -1,4 +1,5 @@
 import pygame
+print(pygame.ver)
 import sys
 sys.path.insert(0, '..')
 import Chapitre_2.Code.main as cp2
@@ -139,9 +140,8 @@ def afficher_options():
                         in_menu = True
 
                     if quitter.is_clicked(event.pos):
-                        in_options = False
-                        in_menu = True
-                        running = False
+                        pygame.quit()
+                        quit()
 
                     # Vérifier si l'utilisateur a cliqué sur la barre de progression du volume de la bande son
                     if barre_volume.is_clicked(event.pos):
@@ -167,7 +167,7 @@ def afficher_options():
         texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4 - 100))
         screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
 
-        # Afficher la barre de progression du volume de la bande son
+        # Afficher les barres de réglages
         screen.blit(barre_volume.surface, barre_volume.rect)
         screen.blit(barre_effets.surface, barre_effets.rect)
 
@@ -181,54 +181,58 @@ def afficher_options():
 
 
 def afficher_menu():
-    global in_options
-    global in_menu, in_options
+    global in_options, in_menu, running
     global menu_bg
 
-    in_options = False
-    in_menu = True
-
-    # Afficher le bg
-    screen.blit(menu_bg, (menu_bg_x, menu_bg_y))
-
-    # Définir la police et la couleur du texte
-    font = pygame.font.Font("freesansbold.ttf", 150)
-    text = font.render("Virus Gate", True, (GRAY))
-    text_rect = text.get_rect()
-    text_rect.center = (screen_width // 2, screen_height // 9)  # Centrer le texte dans la fenêtre
-    screen.blit(text, text_rect)
-
-    # Afficher les boutons à gauche de l'écran      
-    screen.blit(button1.surface, button1.rect)
-    screen.blit(button2.surface, button2.rect)
-    screen.blit(options.surface, options.rect)
-    screen.blit(quitter.surface, quitter.rect)
-
-    pygame.display.flip()
-
-# Boucle principale du jeu
-running = True
-while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            pygame.quit()
+            quit()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # 1 pour le bouton gauche de la souris
                 if options.is_clicked(event.pos): # Si l'utilisateur appuie sur "options", accède à la partie "options"
                     in_options = True
                     in_menu = False
                 elif quitter.is_clicked(event.pos): # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
+                    pygame.quit()
+                    quit()
+                elif button1.is_clicked(event.pos):                   
+                    in_menu = False
                     running = False
                 elif button2.is_clicked(event.pos):
-                    pygame.quit()
+                    print("Niveau 2")
                     cp2.start()
-    if in_options :
-        afficher_options()
-    elif in_menu :
-        afficher_menu()
+                    in_menu = False
+                    running = False
 
-    # Mettre à jour l'affichage
-    pygame.display.flip()
+        # Afficher le bg
+        screen.blit(menu_bg, (menu_bg_x, menu_bg_y))
 
-# Quitter le jeu 
-pygame.quit()
+        # Définir la police et la couleur du texte
+        font = pygame.font.Font("freesansbold.ttf", 150)
+        text = font.render("Virus Gate", True, (GRAY))
+        text_rect = text.get_rect()
+        text_rect.center = (screen_width // 2, screen_height // 9)  # Centrer le texte dans la fenêtre
+        screen.blit(text, text_rect)
+
+        # Afficher les boutons à gauche de l'écran      
+        screen.blit(button1.surface, button1.rect)
+        screen.blit(button2.surface, button2.rect)
+        screen.blit(options.surface, options.rect)
+        screen.blit(quitter.surface, quitter.rect)
+
+        pygame.display.flip()
+
+# Boucle principale du jeu
+def main():
+    running = True
+    while running:
+        if in_options :
+            afficher_options()
+        elif in_menu :
+            afficher_menu()
+
+        # Mettre à jour l'affichage
+        pygame.display.flip()
+
+main()
