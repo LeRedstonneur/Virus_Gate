@@ -1,7 +1,7 @@
 import pygame
 import math
-import calculs
-from player import Player
+import Chapitre_2.Code.calculs as calculs
+from Chapitre_2.Code.player import Player
 # import player
 
 class Trap:

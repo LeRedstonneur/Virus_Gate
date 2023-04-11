@@ -1,19 +1,19 @@
 import pygame
-from player import Player
-from tower import Tower
-from trap import Trap
-from quit import leave
-from obstacles import *
-from pieces import piecestemp
-
 
 def start():
+    from Chapitre_2.Code.player import Player
+    from Chapitre_2.Code.tower import Tower
+    from Chapitre_2.Code.trap import Trap
+    from Chapitre_2.Code.quit import leave
+    from Chapitre_2.Code.obstacles import obstacles, spikes, checkpoints, towers, traps
+    from Chapitre_2.Code.pieces import piecestemp
+
     """Cette fonction est appelée par l'écran d'accueil pour démarrer le niveau"""
     pygame.init()
 
     # Gestion de l'écran
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    bg = pygame.image.load("../Assets/a.jpg")
+    bg = pygame.image.load("../Chapitre_2/Assets/a.jpg")
     rect = bg.get_rect()
 
     # Le titre de la fenêtre
@@ -184,6 +184,3 @@ def start():
             screen.blit(text4, (250, 400))
 
             pygame.display.flip()
-
-
-start()

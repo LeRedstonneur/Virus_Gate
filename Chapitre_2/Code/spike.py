@@ -1,6 +1,6 @@
 import pygame
 import math
-from player import Player
+from Chapitre_2.Code.player import Player
 
 class Spike:
     def __init__(self, posx: int, posy: int):

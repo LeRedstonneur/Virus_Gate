@@ -1,6 +1,6 @@
 import pygame
 
-
 def leave():
-    print("On quitte le programme")
+    import main as accueil
     pygame.quit()
+    accueil.main()
