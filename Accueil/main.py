@@ -213,11 +213,13 @@ def afficher_menu():
                 elif quitter.is_clicked(event.pos): # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
                     pygame.quit()
                     quit()
-                elif button1.is_clicked(event.pos):                   
+                elif button1.is_clicked(event.pos):    
+                    print("Niveau 1 à lancer")   
+                    '''           
                     in_menu = False
                     running = False
+                    ''' 
                 elif button2.is_clicked(event.pos):
-                    print("Niveau 2")
                     cp2.start()
                     in_menu = False
                     running = False
