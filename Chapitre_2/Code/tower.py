@@ -98,6 +98,9 @@ class Projectile:
                 
         if pygame.Rect(-self.posx - self.cote / 2, -self.posy - self.cote / 2, self.cote, self.cote).colliderect(-joueur.posx, -joueur.posy, joueur.largeur, joueur.hauteur):
             joueur.vies -= 1 + int(self.explosif)
+            if joueur.vies < 0:
+                joueur.vies = 0
+            # On évite de se retrouver face à un nombre de vies négatif
             self.to_delete = True
             joueur.pause = 180
 
