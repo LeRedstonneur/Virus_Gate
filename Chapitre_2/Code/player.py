@@ -21,7 +21,7 @@ class Player:
         self.jump_height = int(self.hauteur_de_saut * (1 - self.ralentissement / 2))
         self.pieces = 0  # Les pièces ramassées par le joueur
         self.pieces_validees = 0  # Les pièces ramassées par le joueur au dernier moment où il a été sur un checkpoint
-        self.checkpoint = 2  # Le numéro du checkpoint sur lequel le joueur est
+        self.checkpoint = 0  # Le numéro du checkpoint sur lequel le joueur est
 
         # Par défaut, le joueur est immobile
         self.mouvements = {"jump": False, "left": False, "right": False}
