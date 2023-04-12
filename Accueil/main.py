@@ -1,3 +1,5 @@
+#------------------------------------------- VARIABLES IMPORTANTES -------------------------------------------#
+
 import pygame
 print(pygame.ver)
 import sys
@@ -26,29 +28,29 @@ options_bg_x = (screen_width - options_bg_width) // 2
 options_bg_y = (screen_height - options_bg_height) // 2
 
 
-# Définir les couleurs
+# Définition des couleurs
 WHITE = (200, 200, 200)
 BLACK = (0, 0, 0)
 GRAY = (140, 140, 140)
 BLUE_HACKER = (45, 53, 82)
 GREEN = (0, 220, 0)
 
-# Définir la police et la taille de la police
+# Définition de la police et la taille de la police d'écriture
 font = pygame.font.Font(None, 36)
 
-# Charger le fichier audio dans un objet de son 
+# Chargement du fichier audio dans un objet de son 
 son_accueil = pygame.mixer.Sound("Bande son accueil.mp3")
 son_accueil.play(-1)
-son_accueil.set_volume(0.1)
 
-# Volume de la bande son accueil (par défaut à 50%)
-volume_bande_son_accueil = 0.5
-
-# Volume des effets sonores (par défaut à 50%)
-volume_effets_sonores = 0.5
+# Volume de la bande son accueil (par défaut à 10%)
+volume_bande_son_accueil = 0.1
+son_accueil.set_volume(volume_bande_son_accueil)
 
 # Luminosité (par défaut à 50%)
 luminosite = 0.5
+
+
+#----------------------------------- CLASSES POUR LES BOUTONS ET CURSEURS -----------------------------------#
 
 class Button:
     def __init__(self, text, width, height, x, y, color, font_color):
@@ -70,6 +72,27 @@ class Button:
 
     def is_clicked(self, mouse_pos):
         return self.rect.collidepoint(mouse_pos)
+    
+class Barre:
+    def __init__(self, width, height, x, y, x_curseur):
+        self.x = x
+        self.y = y
+        self.curseur_x = x_curseur
+        self.curseur_y = self.y
+
+        self.surface = pygame.Surface((width, height))
+        self.surface.fill(GREEN)
+        self.rect = self.surface.get_rect(topleft=(self.x, self.y))
+
+        self.curseur_surface = pygame.Surface((15, height))
+        self.curseur_surface.fill((0, 0, 0)) # couleur noire
+        self.curseur_rect = self.curseur_surface.get_rect(topleft=(self.curseur_x, self.curseur_y))
+
+    def is_clicked(self, mouse_pos):
+        return self.rect.collidepoint(mouse_pos)
+    
+
+#----------------------------------- INITIALISATION DES BOUTONS ET CURSEURS -----------------------------------#
 
 # Définir les dimensions et l'emplacement du premier bouton
 button1 = Button("Niveau 1", 300, 100, 50, screen_height / 1.3 - 100 / 1.3, BLUE_HACKER, BLACK)
@@ -89,34 +112,16 @@ retour = Button("Retour", 300, 100, screen_width - 350, screen_height / 1.3 - 10
 # Créer la fenêtre en mode plein écran
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
 
-# Initialisation de la variable pour vérifier si nous sommes dans le menu principal
-in_menu = True
-in_options = False
-
-class Barre:
-    def __init__(self, width, height, x, y, x_curseur):
-        self.x = x
-        self.y = y
-        self.curseur_x = x_curseur
-        self.curseur_y = self.y
-
-        self.surface = pygame.Surface((width, height))
-        self.surface.fill(GREEN)
-        self.rect = self.surface.get_rect(topleft=(self.x, self.y))
-
-        self.curseur_surface = pygame.Surface((15, height))
-        self.curseur_surface.fill((0, 0, 0)) # couleur noire
-        self.curseur_rect = self.curseur_surface.get_rect(topleft=(self.curseur_x, self.curseur_y))
-
-    def is_clicked(self, mouse_pos):
-        return self.rect.collidepoint(mouse_pos)
-
 # Définir la barre du volume avec son curseur
 barre_volume = Barre(1000, 50, screen_width / 15, screen_height / 4 + 100, int(volume_bande_son_accueil * 1000))
 
 # Définir la barre des effets sonores avec son curseur
 barre_lumi = Barre(1000, 50, screen_width / 15, screen_height / 2 + 100, int(screen_width / 15 + 740))
 
+
+#------------------------------- CODE POUR LA PAGE DU MENU ET DE LA PAGE OPTIONS -------------------------------#
+
+# Les options
 def afficher_options():
     global in_menu, in_options, running
     global volume_bande_son_accueil
@@ -192,10 +197,9 @@ def afficher_options():
 
         pygame.display.update()
 
-
+# Le menu
 def afficher_menu():
     global in_options, in_menu, running
-    global menu_bg
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -236,6 +240,13 @@ def afficher_menu():
 
         pygame.display.flip()
 
+
+#-------------------------------------------- BOUCLE DE LANCEMENT --------------------------------------------#
+
+# Initialisation de la variable pour vérifier si nous sommes dans le menu principal
+in_menu = True
+in_options = False
+
 # Boucle principale du jeu
 def main():
     running = True
@@ -248,4 +259,4 @@ def main():
         # Mettre à jour l'affichage
         pygame.display.flip()
 
-main()
+main() # Que le jeu commence !
