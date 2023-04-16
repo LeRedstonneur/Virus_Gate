@@ -249,11 +249,10 @@ def afficher_menu():
 
 
 # -------------------------------------------- BOUCLE DE LANCEMENT --------------------------------------------#
-
+# Initialisation de la variable pour vérifier si nous sommes dans le menu principal
+in_menu = True
+in_options = False
 def main():
-    # Initialisation de la variable pour vérifier si nous sommes dans le menu principal
-    in_menu = True
-    in_options = False
     running = True
     while running:
         if in_options:
