@@ -227,7 +227,6 @@ def afficher_menu():
                 elif button2.is_clicked(event.pos):
                     in_menu = False
                     running = False
-                    son_accueil.stop()
                     cp2.start()
 
         # Afficher le bg
