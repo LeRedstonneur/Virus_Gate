@@ -250,13 +250,10 @@ def afficher_menu():
 
 # -------------------------------------------- BOUCLE DE LANCEMENT --------------------------------------------#
 
-# Initialisation de la variable pour vérifier si nous sommes dans le menu principal
-in_menu = True
-in_options = False
-
-
-# Boucle principale du jeu
 def main():
+    # Initialisation de la variable pour vérifier si nous sommes dans le menu principal
+    in_menu = True
+    in_options = False
     running = True
     while running:
         if in_options:
