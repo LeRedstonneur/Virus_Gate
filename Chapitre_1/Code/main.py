@@ -1,4 +1,3 @@
-# Importation des bibliothèques nécessaires (Chapitre_1.Code)
 
 
 
@@ -8,7 +7,9 @@
 
 
 
-def start_TD():
+
+def start_TD(volume):
+    # Importation des bibliothèques nécessaires (Chapitre_1.Code en raison de l'arborescence)
     import pygame
     from random import choice
     import Chapitre_1.Code.path_assets as path_assets
@@ -22,6 +23,16 @@ def start_TD():
     
     #-------------------------------------------------------------------------------------------------------------------------------------------#
     pygame.init()
+    #Ajoute de la musique
+    pygame.mixer.init()
+    pygame.mixer.music.load(path_assets.path_assets+"/musique/neon.mp3")
+    pygame.mixer.music.set_volume(volume)
+    print(volume)
+    pygame.mixer.music.play(-1)
+    click = pygame.mixer.Sound(path_assets.path_assets+"/musique/click.wav")
+    sell = pygame.mixer.Sound(path_assets.path_assets+"/musique/sell.wav")
+    # Play sound effect
+    
     # Création de la fenêtre de jeu de taille 800x800
     
     SCREEN_SIZE = (1920,1080)
@@ -164,6 +175,7 @@ def start_TD():
     game_over = False
     #-------------------------------------------------------------------------------------------------------------------------------------------#
     while running:
+
         screen.fill((0, 0, 0)) 
         map.print_map(screen,matrice,size)
         clock.tick(60)
@@ -196,9 +208,11 @@ def start_TD():
             # Gestion de l'ajout de tours sur les bases
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
+                click.play()
                 for base in bases:
                     if base.rect.collidepoint(mouse_x, mouse_y):
                         if selected_tower is not None and player_money >= TOWER_COSTS[selected_tower]:
+                            
                             # Placer la tour sélectionnée sur la base
                             tower_class = class_Tower.tower_classes[selected_tower]
                             base.add_tower(tower_class(base.rect.x, base.rect.y,size))
@@ -206,14 +220,12 @@ def start_TD():
                             bases.remove(base)
                             player_money -= TOWER_COSTS[selected_tower]  # Déduire le coût de la tour
                         selected_tower = None
-                
+                            
                 if event.button == 1:  # Bouton gauche de la souris
                     for tower_button in tower_buttons:
                         if tower_button.rect.collidepoint(event.pos):
                             selected_tower = tower_dico[tower_button.text]
-                            
                     mouse_x, mouse_y = pygame.mouse.get_pos()
-                    
                     for tower in groups.tower_group:
                         if tower.rect.collidepoint(mouse_x, mouse_y):
                             tower.toggle_range()
@@ -235,6 +247,7 @@ def start_TD():
                             bases.append(class_Base.Base(original_pos[0], original_pos[1],size[0],size[1],(tower.rect.x//size[0],tower.rect.y//size[1])))
                             player_money += refund_amount
                             groups.tower_group.remove(tower)
+                            sell.play()
                 if event.key == pygame.K_ESCAPE:
                     running = False
                     quitting = True
