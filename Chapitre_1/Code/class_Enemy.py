@@ -22,7 +22,8 @@ class Enemy(pygame.sprite.Sprite):
         self.slowing_towers = []
         self.stun = False
         self.when_stunned = 0
-    
+        self.passing = pygame.mixer.Sound(path_assets.path_assets+"/musique/enemy_passing.wav")
+
     def is_dead(self):
         if self.health <= 0:
             if self.groups():
@@ -52,6 +53,7 @@ class Enemy(pygame.sprite.Sprite):
                 if self.current_checkpoint >= len(self.path):
                     self.has_traversed = True # on est arrivé au dernier checkpoint, on peut supprimer l'ennemi
                     self.groups()[0].remove(self)
+                    self.passing.play()
                     
                 else:
                     self.destination = self.path[self.current_checkpoint]
