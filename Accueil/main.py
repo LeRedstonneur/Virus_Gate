@@ -6,6 +6,7 @@ print(pygame.ver)
 import sys
 
 sys.path.insert(0, '..')
+import Chapitre_1.Code.main as cp1
 import Chapitre_2.Code.main as cp2
 
 pygame.init()
@@ -219,11 +220,10 @@ def afficher_menu():
                     pygame.quit()
                     quit()
                 elif button1.is_clicked(event.pos):
-                    print("Niveau 1 à lancer")
-                    '''           
                     in_menu = False
                     running = False
-                    '''
+                    son_accueil.stop()
+                    cp1.start_TD()
                 elif button2.is_clicked(event.pos):
                     in_menu = False
                     running = False
