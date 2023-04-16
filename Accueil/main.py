@@ -223,7 +223,7 @@ def afficher_menu():
                     in_menu = False
                     running = False
                     son_accueil.stop()
-                    cp1.start_TD()
+                    cp1.start_TD(volume_bande_son_accueil)
                 elif button2.is_clicked(event.pos):
                     in_menu = False
                     running = False
