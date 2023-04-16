@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 def start_TD(volume):
     # Importation des bibliothèques nécessaires (Chapitre_1.Code en raison de l'arborescence)
     import pygame
@@ -337,7 +327,7 @@ def start_TD(volume):
                     groups.enemy_group.empty()
                     groups.tower_group.empty()
                     pygame.quit()
-                    start_TD()
+                    start_TD(volume)
                 if Quit.activated :
                     replay = False
     pygame.quit()
