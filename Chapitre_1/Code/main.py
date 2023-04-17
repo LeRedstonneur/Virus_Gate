@@ -333,5 +333,6 @@ def start_TD(volume):
                 if Quit.activated :
                     replay = False
     pygame.quit()
+    mixer. music. stop()
     leave()
     return None
