@@ -177,8 +177,8 @@ def afficher_options():
         titre_rect = titre_surface.get_rect(center=(screen_width / 2, screen_height / 8))
         screen.blit(titre_surface, titre_rect)
 
-        font = pygame.font.Font("freesansbold.ttf", 50)
         # Afficher le texte "Volume de la bande son"
+        font = pygame.font.Font("freesansbold.ttf", 50)
         texte_volume_bande_son = font.render("Volume de la bande son", True, GRAY)
         texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4))
         screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
@@ -187,6 +187,12 @@ def afficher_options():
         texte_lumi = font.render("Luminosité de l'écran", True, GRAY)
         texte_lumi_rect = texte_lumi.get_rect(topleft=(screen_width / 14, screen_height / 2))
         screen.blit(texte_lumi, texte_lumi_rect)
+
+        # Afficher le texte des crédits
+        font = pygame.font.Font("freesansbold.ttf", 20)
+        texte_volume_bande_son = font.render("Soundtrack : Deep Within Team Galactic HQ      By GAME FREACK", True, GRAY)
+        texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 16, screen_height / 1.1))
+        screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
 
         # Afficher les barres de réglages
         screen.blit(barre_volume.surface, barre_volume.rect)
