@@ -212,28 +212,28 @@ def afficher_options():
 # Le menu
 def afficher_menu():
     global in_options, in_menu, running, son_accueil
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # 1 pour le bouton gauche de la souris
-                if options.is_clicked(event.pos):  # Si l'utilisateur appuie sur "options", accède à la partie "options"
-                    in_options = True
-                    in_menu = False
-                elif quitter.is_clicked(event.pos):  # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
-                    pygame.quit()
-                    quit()
-                elif button1.is_clicked(event.pos):
-                    in_menu = False
-                    running = False
-                    son_accueil.stop()
-                    cp1.start_TD(volume_bande_son_accueil)
-                elif button2.is_clicked(event.pos):
-                    in_menu = False
-                    running = False
-                    cp2.start()
+    while in_menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # 1 pour le bouton gauche de la souris
+                    if options.is_clicked(event.pos):  # Si l'utilisateur appuie sur "options", accède à la partie "options"
+                        in_options = True
+                        in_menu = False
+                    elif quitter.is_clicked(event.pos):  # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
+                        pygame.quit()
+                        quit()
+                    elif button1.is_clicked(event.pos):
+                        in_menu = False
+                        running = False
+                        son_accueil.stop()
+                        cp1.start_TD(volume_bande_son_accueil)
+                    elif button2.is_clicked(event.pos):
+                        in_menu = False
+                        running = False
+                        cp2.start()
 
         # Afficher le bg
         screen.blit(menu_bg, (menu_bg_x, menu_bg_y))
