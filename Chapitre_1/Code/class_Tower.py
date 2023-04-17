@@ -124,9 +124,6 @@ class SquareTower(TowerDefense, pygame.sprite.Sprite):
             coord_x = self.x + gap_x
             coord_y = self.y + gap_y 
             pygame.draw.rect(screen, (0, 255, 255), (coord_x,coord_y, self.range/self.animation_state, self.range/self.animation_state),width=5)
-            
-
-
 
     def stun(self,enemy_group) :
         for enemy in enemy_group :
@@ -245,7 +242,7 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 10
+        self.speed = 20
         self.has_hit = False
 
     def update(self,screen):
@@ -274,10 +271,10 @@ class TriangleTower(TowerDefense, pygame.sprite.Sprite):
         self.original_pos = (x, y)
         self.cooldown = 0.5
         self.last_attack_time = 0
-        self.damage = 10
+        self.damage = 20
         self.cost = 40
         self.projectiles = []
-        self.range = 150
+        self.range = 175
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/triangle_shooting.wav")
         self.sfx .set_volume(0.25)
         self.projectile_img = pygame.image.load(path_assets.path_assets+'/Projectiles/small_bullet.png')
@@ -333,7 +330,7 @@ class TrapezeTower(TriangleTower):
         self.cooldown = 3
         self.damage = 50
         self.cost = 50
-        self.range = 200
+        self.range = 225
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/trapeze_shooting.wav")
         self.sfx.set_volume(0.25)
         self.sfx_bullet = pygame.mixer.Sound(path_assets.path_assets+"/musique/explosion.wav")
