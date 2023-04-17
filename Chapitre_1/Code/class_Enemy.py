@@ -23,7 +23,8 @@ class Enemy(pygame.sprite.Sprite):
         self.stun = False
         self.when_stunned = 0
         self.passing = pygame.mixer.Sound(path_assets.path_assets+"/musique/enemy_passing.wav")
-
+        self.passing.set_volume(0.5)
+        
     def is_dead(self):
         if self.health <= 0:
             if self.groups():
