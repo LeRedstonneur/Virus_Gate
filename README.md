@@ -18,3 +18,4 @@ Le planning des différentes semaines est disponible à <a href="https://docs.go
 <ul>L’exécutable ne fonctionne pas : exécuter le fichier main.py à la place du fichier exécutable.</ul>
 <ul>Erreur Python - ressources non trouvées : <strong>il faut se trouver dans le répertoire Accueil</strong> et lancer le fichier main.py pour que les ressources soient chargées.</ul>
 <ul>Problème d’affichage au chapitre 2 : pour des raisons techniques, ce chapitre fonctionne correctement lorsque l’affichage fait <strong>1920x1080 pixels</strong> (FHD).</ul>
+<ul>Le jeu est lent : achetez un meilleur ordinateur</ul>

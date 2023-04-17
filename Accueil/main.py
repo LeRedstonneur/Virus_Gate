@@ -1,8 +1,6 @@
 # ------------------------------------------- VARIABLES IMPORTANTES -------------------------------------------#
 
 import pygame
-
-print(pygame.ver)
 import sys
 
 sys.path.insert(0, '..')
@@ -116,10 +114,10 @@ retour = Button("Retour", 300, 100, screen_width - 350, screen_height / 1.3 - 10
 screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
 
 # Définir la barre du volume avec son curseur
-barre_volume = Barre(1000, 50, screen_width / 15, screen_height / 4 + 100, int(volume_bande_son_accueil * 1000))
+barre_volume = Barre(1000, 50, screen_width / 15, screen_height / 4 + 100, int((screen_width / 15) + (volume_bande_son_accueil * 1000)))
 
 # Définir la barre des effets sonores avec son curseur
-barre_lumi = Barre(1000, 50, screen_width / 15, screen_height / 2 + 100, int(screen_width / 15 + 740))
+barre_lumi = Barre(1000, 50, screen_width / 15, screen_height / 2 + 100, int(screen_width / 15 + luminosite * 1000))
 
 
 # ------------------------------- CODE POUR LA PAGE DU MENU ET DE LA PAGE OPTIONS -------------------------------#
@@ -161,97 +159,98 @@ def afficher_options():
                     # Vérifier si l'utilisateur a cliqué sur la barre de progression du volume de la luminosité
                     if barre_lumi.is_clicked(event.pos):
                         # Régler la luminosité en fonction de la position du curseur
-                        pygame.display.set_gamma((event.pos[0] + 180) / 1000)
+                        luminosite = (event.pos[0] + 180) / 1000
+                        pygame.display.set_gamma(luminosite)
                         barre_lumi.curseur_x = event.pos[0]
 
-        # Afficher l'image de fond
-        screen.blit(options_bg, (options_bg_x, options_bg_y))
+            # Afficher l'image de fond
+            screen.blit(options_bg, (options_bg_x, options_bg_y))
 
-        # Afficher les boutons
-        screen.blit(quitter.surface, quitter.rect)
-        screen.blit(retour.surface, retour.rect)
+            # Afficher les boutons
+            screen.blit(quitter.surface, quitter.rect)
+            screen.blit(retour.surface, retour.rect)
 
-        # Afficher le titre "Options"
-        font = pygame.font.Font("freesansbold.ttf", 100)
-        titre_surface = font.render("Options", True, WHITE)
-        titre_rect = titre_surface.get_rect(center=(screen_width / 2, screen_height / 8))
-        screen.blit(titre_surface, titre_rect)
+            # Afficher le titre "Options"
+            font = pygame.font.Font("freesansbold.ttf", 100)
+            titre_surface = font.render("Options", True, WHITE)
+            titre_rect = titre_surface.get_rect(center=(screen_width / 2, screen_height / 8))
+            screen.blit(titre_surface, titre_rect)
 
-        # Afficher le texte "Volume de la bande son"
-        font = pygame.font.Font("freesansbold.ttf", 50)
-        texte_volume_bande_son = font.render("Volume de la bande son", True, GRAY)
-        texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4))
-        screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
+            # Afficher le texte "Volume de la bande son"
+            font = pygame.font.Font("freesansbold.ttf", 50)
+            texte_volume_bande_son = font.render("Volume de la bande son", True, GRAY)
+            texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 14, screen_height / 4))
+            screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
 
-        # Afficher le texte "Luminosité de l'écran"
-        texte_lumi = font.render("Luminosité de l'écran", True, GRAY)
-        texte_lumi_rect = texte_lumi.get_rect(topleft=(screen_width / 14, screen_height / 2))
-        screen.blit(texte_lumi, texte_lumi_rect)
+            # Afficher le texte "Luminosité de l'écran"
+            texte_lumi = font.render("Luminosité de l'écran", True, GRAY)
+            texte_lumi_rect = texte_lumi.get_rect(topleft=(screen_width / 14, screen_height / 2))
+            screen.blit(texte_lumi, texte_lumi_rect)
 
-        # Afficher le texte des crédits
-        font = pygame.font.Font("freesansbold.ttf", 20)
-        texte_volume_bande_son = font.render("Soundtrack : Deep Within Team Galactic HQ      By GAME FREACK", True, GRAY)
-        texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 16, screen_height / 1.1))
-        screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
+            # Afficher le texte des crédits
+            font = pygame.font.Font("freesansbold.ttf", 20)
+            texte_volume_bande_son = font.render("Soundtrack : Deep Within Team Galactic HQ      By GAME FREACK", True, GRAY)
+            texte_volume_bande_son_rect = texte_volume_bande_son.get_rect(topleft=(screen_width / 16, screen_height / 1.1))
+            screen.blit(texte_volume_bande_son, texte_volume_bande_son_rect)
 
-        # Afficher les barres de réglages
-        screen.blit(barre_volume.surface, barre_volume.rect)
-        screen.blit(barre_lumi.surface, barre_lumi.rect)
+            # Afficher les barres de réglages
+            screen.blit(barre_volume.surface, barre_volume.rect)
+            screen.blit(barre_lumi.surface, barre_lumi.rect)
 
-        # Afficher le curseur à propos du volume
-        barre_volume.curseur_rect = barre_volume.curseur_surface.get_rect(
-            topleft=(barre_volume.curseur_x, barre_volume.curseur_y))
-        barre_lumi.curseur_rect = barre_lumi.curseur_surface.get_rect(
-            topleft=(barre_lumi.curseur_x, barre_lumi.curseur_y))
-        screen.blit(barre_volume.curseur_surface, barre_volume.curseur_rect)
-        screen.blit(barre_lumi.curseur_surface, barre_lumi.curseur_rect)
+            # Afficher le curseur à propos du volume
+            barre_volume.curseur_rect = barre_volume.curseur_surface.get_rect(
+                topleft=(barre_volume.curseur_x, barre_volume.curseur_y))
+            barre_lumi.curseur_rect = barre_lumi.curseur_surface.get_rect(
+                topleft=(barre_lumi.curseur_x, barre_lumi.curseur_y))
+            screen.blit(barre_volume.curseur_surface, barre_volume.curseur_rect)
+            screen.blit(barre_lumi.curseur_surface, barre_lumi.curseur_rect)
 
-        pygame.display.update()
+            pygame.display.update()
 
 
 # Le menu
 def afficher_menu():
     global in_options, in_menu, running, son_accueil
+    while in_menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # 1 pour le bouton gauche de la souris
+                    if options.is_clicked(event.pos):  # Si l'utilisateur appuie sur "options", accède à la partie "options"
+                        in_options = True
+                        in_menu = False
+                    elif quitter.is_clicked(event.pos):  # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
+                        pygame.quit()
+                        quit()
+                    elif button1.is_clicked(event.pos):
+                        in_menu = False
+                        running = False
+                        son_accueil.stop()
+                        cp1.start_TD(volume_bande_son_accueil)
+                    elif button2.is_clicked(event.pos):
+                        in_menu = False
+                        running = False
+                        cp2.start()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:  # 1 pour le bouton gauche de la souris
-                if options.is_clicked(event.pos):  # Si l'utilisateur appuie sur "options", accède à la partie "options"
-                    in_options = True
-                    in_menu = False
-                elif quitter.is_clicked(event.pos):  # Si l'utilisateur appuie sur "quitter", le jeu s'arrête
-                    pygame.quit()
-                    quit()
-                elif button1.is_clicked(event.pos):
-                    in_menu = False
-                    running = False
-                    son_accueil.stop()
-                    cp1.start_TD(volume_bande_son_accueil)
-                elif button2.is_clicked(event.pos):
-                    in_menu = False
-                    running = False
-                    cp2.start()
+            # Afficher le bg
+            screen.blit(menu_bg, (menu_bg_x, menu_bg_y))
 
-        # Afficher le bg
-        screen.blit(menu_bg, (menu_bg_x, menu_bg_y))
+            # Définir la police et la couleur du texte
+            font = pygame.font.Font("freesansbold.ttf", 150)
+            text = font.render("Virus Gate", True, (GRAY))
+            text_rect = text.get_rect()
+            text_rect.center = (screen_width // 2, screen_height // 9)  # Centrer le texte dans la fenêtre
+            screen.blit(text, text_rect)
 
-        # Définir la police et la couleur du texte
-        font = pygame.font.Font("freesansbold.ttf", 150)
-        text = font.render("Virus Gate", True, (GRAY))
-        text_rect = text.get_rect()
-        text_rect.center = (screen_width // 2, screen_height // 9)  # Centrer le texte dans la fenêtre
-        screen.blit(text, text_rect)
+            # Afficher les boutons à gauche de l'écran      
+            screen.blit(button1.surface, button1.rect)
+            screen.blit(button2.surface, button2.rect)
+            screen.blit(options.surface, options.rect)
+            screen.blit(quitter.surface, quitter.rect)
 
-        # Afficher les boutons à gauche de l'écran      
-        screen.blit(button1.surface, button1.rect)
-        screen.blit(button2.surface, button2.rect)
-        screen.blit(options.surface, options.rect)
-        screen.blit(quitter.surface, quitter.rect)
-
-        pygame.display.flip()
+            pygame.display.flip()
 
 
 # -------------------------------------------- BOUCLE DE LANCEMENT --------------------------------------------#
