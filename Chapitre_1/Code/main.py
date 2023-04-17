@@ -250,7 +250,7 @@ def start_TD(volume):
                 tower.update(groups.enemy_group,screen)
                 tower.draw_range(screen)
             elif isinstance(tower, class_Tower.RoundTower):
-                tower.attack(groups.enemy_group, screen)
+                tower.update(groups.enemy_group, screen)
                 tower.draw_range(screen)
             elif isinstance(tower, class_Tower.TriangleTower):
                 tower.update(groups.enemy_group, screen)
@@ -302,8 +302,8 @@ def start_TD(volume):
     
     replay = True
     if not quitting :
-        Replay = class_Button.Button(800, 640, 200,50 ,text='Replay ?') 
-        Quit = class_Button.Button(800, 740, 200,50 ,text='Quit ?') 
+        Replay = class_Button.Button(850, 640, 200,50 ,text='Replay ?') 
+        Quit = class_Button.Button(850, 740, 200,50 ,text='Quit ?') 
         del button
         button = (Replay,Quit)
         screen.fill((0, 0, 0)) 
