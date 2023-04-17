@@ -63,7 +63,7 @@ class SquareTower(TowerDefense, pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)  
         TowerDefense.__init__(self, x, y,path_assets.path_assets+'/towers/square_tower.png',size)
         self.original_pos = (x,y)
-        self.cooldown = 3
+        self.cooldown = 4
         self.cost = 20
         self.range = 200
         self.slowing_factor = 0.6
@@ -71,7 +71,9 @@ class SquareTower(TowerDefense, pygame.sprite.Sprite):
         self.last_attack_time = 0
         self.stun_duration = 1
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/freeze.wav")
-        self.sfx .set_volume(0.5)
+        self.sfx .set_volume(0.25)
+        self.animation_state = 16
+        self.do_animation = False
 
 
 
@@ -102,34 +104,56 @@ class SquareTower(TowerDefense, pygame.sprite.Sprite):
 
             pygame.draw.rect(screen, (0, 255, 255), (coord_x,coord_y, self.range, self.range),width=5)
 
-    def  animation(self, screen):
-        gap_x = (self.rect.width - self.range)  / 2
-        gap_y = (self.rect.height - self.range) / 2
-        coord_x = self.x + gap_x
-        coord_y = self.y + gap_y 
 
-        pygame.draw.rect(screen, (255, 0, 0), (coord_x,coord_y, self.range, self.range),width=5)
+
+    def detect_enemy(self,enemy_group) :
+        for enemy in enemy_group :
+            if self.in_range(enemy) :
+                return True
+        else :
+            return False
+
+    def animation (self,screen):
+        if self.animation_state == 0:
+            self.animation_state = 16
+            self.do_animation = False
+        
+        else :
+            gap_x = (self.rect.width - self.range/self.animation_state)  / 2
+            gap_y = (self.rect.height - self.range/self.animation_state) / 2
+            coord_x = self.x + gap_x
+            coord_y = self.y + gap_y 
+            pygame.draw.rect(screen, (0, 255, 255), (coord_x,coord_y, self.range/self.animation_state, self.range/self.animation_state),width=5)
             
-    def stun (self,enemy_group,screen):
-        animation = False
+
+
+
+    def stun(self,enemy_group) :
+        for enemy in enemy_group :
+            if self.in_range(enemy):
+                if enemy.stun == 0:
+                    enemy.when_stunned = pygame.time.get_ticks()
+                enemy.stun += self.stun_duration 
+        self.last_attack_time = pygame.time.get_ticks()
+
+    def attack(self,enemy_group) :
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - self.last_attack_time
-        if elapsed_time >= self.cooldown * 1000:
-            for enemy in enemy_group :
-                if self.in_range(enemy):
-                    if enemy.stun == 0:
-                        enemy.when_stunned = pygame.time.get_ticks()
-                    enemy.stun += self.stun_duration 
-                    self.last_attack_time = pygame.time.get_ticks()
-                    animation = True
-            if animation :
-                self.animation(screen)
-                self.sfx.play()
-
-
+        if self.do_animation :
+            if  elapsed_time > 62.5:
+                self.animation_state -= 1
+                if self.animation_state == 1 :
+                    self.stun(enemy_group)
+                    self.sfx.play()
+        else :
+            if self.detect_enemy(enemy_group) and elapsed_time > self.cooldown * 1000:
+                self.do_animation = True
+   
 
     def update(self, enemy_group,screen):
-        self.stun(enemy_group,screen)
+        self.attack(enemy_group)
+        if self.do_animation :
+            self.animation(screen)
         self.slow_enemies_in_range(enemy_group)
         
 
@@ -144,35 +168,65 @@ class RoundTower(TowerDefense, pygame.sprite.Sprite):
         self.cost = 30
         self.range = 100
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/circle_shooting.wav")
-        self.sfx.set_volume(0.5)
+        self.sfx.set_volume(0.25)
+        self.do_animation = False
+        self.animation_state = 16
 
+    def animation(self, screen_to_blit):
+        if self.animation_state == 0:
+            self.animation_state = 16
+            self.do_animation = False
+        else :
+            center_x = self.rect.x + self.rect.width // 2
+            center_y = self.rect.y + self.rect.height // 2
+            pygame.draw.circle(screen_to_blit, (0, 255, 0), (center_x, center_y), self.range/self.animation_state, 5)
+        
 
-    def attack_animation(self, screen_to_blit):
-        center_x = self.rect.x + self.rect.width // 2
-        center_y = self.rect.y + self.rect.height // 2
-        pygame.draw.circle(screen_to_blit, (255, 0, 0), (center_x, center_y), self.range, 5)
-        self.sfx.play()
+    def detect_enemy(self,enemy_group) :
+        for enemy in enemy_group :
+            if self.in_range(enemy) :
+                return True
+        else :
+            return False
+        
+    # def attack(self, enemy_group, screen):
+    #     animation = False
+    #     current_time = pygame.time.get_ticks()
+    #     elapsed_time = current_time - self.last_attack_time
+    #     if elapsed_time >= self.cooldown * 1000:
+    #         for enemy in enemy_group:
+    #             if self.in_range(enemy):
+    #                 enemy.take_damage(self.damage)
+    #                 elapsed_time = 0
+    #                 self.last_attack_time = pygame.time.get_ticks()
+    #                 animation = True
+    #         if animation :
+    #             self.attack_animation(screen)
 
-
-    def attack(self, enemy_group, screen):
-        animation = False
+    def attack(self,enemy_group) :
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - self.last_attack_time
-        if elapsed_time >= self.cooldown * 1000:
-            for enemy in enemy_group:
+        if self.do_animation :
+            if  elapsed_time > 62.5:
+                self.animation_state -= 1
+                if self.animation_state == 1 :
+                    self.do_damage(enemy_group)
+                    self.sfx.play()
+        else :
+            if self.detect_enemy(enemy_group) and elapsed_time > self.cooldown * 1000:
+                self.do_animation = True
+
+    def do_damage(self,enemy_group) :
+        for enemy in enemy_group:
                 if self.in_range(enemy):
                     enemy.take_damage(self.damage)
-                    elapsed_time = 0
-                    self.last_attack_time = pygame.time.get_ticks()
-                    animation = True
-            if animation :
-                self.attack_animation(screen)
-
-
+        self.last_attack_time = pygame.time.get_ticks()
 
 
     def update(self, enemy_group, screen):
-        self.attack(enemy_group, screen)
+        if self.do_animation :
+            self.animation(screen)
+        self.attack(enemy_group)
         
     def draw_range(self, screen):
         if self.show_range:
@@ -225,7 +279,7 @@ class TriangleTower(TowerDefense, pygame.sprite.Sprite):
         self.projectiles = []
         self.range = 150
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/triangle_shooting.wav")
-        self.sfx .set_volume(0.5)
+        self.sfx .set_volume(0.25)
         self.projectile_img = pygame.image.load(path_assets.path_assets+'/Projectiles/small_bullet.png')
 
     def point_to_enemy(self):
@@ -281,9 +335,9 @@ class TrapezeTower(TriangleTower):
         self.cost = 50
         self.range = 200
         self.sfx = pygame.mixer.Sound(path_assets.path_assets+"/musique/trapeze_shooting.wav")
-        self.sfx.set_volume(0.5)
+        self.sfx.set_volume(0.25)
         self.sfx_bullet = pygame.mixer.Sound(path_assets.path_assets+"/musique/explosion.wav")
-        self.sfx_bullet.set_volume(0.5)
+        self.sfx_bullet.set_volume(0.25)
         self.path_bullet = pygame.image.load(path_assets.path_assets+'/Projectiles/big_bullet.png')
         self.img_explosion = pygame.transform.scale(pygame.image.load(path_assets.path_assets+'/Projectiles/explosion.png'),(50,50))
 
@@ -317,23 +371,39 @@ class ExplosiveProjectile(Projectile):
         self.explosion_radius = 50
         self.sfx = sfx
         self.explosion_image = explosion_image
+        self.explosion_draw = False
+        self.hit_time = None
 
     def update(self,screen):
-        if not self.target.is_dead():
-            dx = self.target.rect.centerx - self.rect.centerx
-            dy = self.target.rect.centery - self.rect.centery
-            distance = math.sqrt(dx * dx + dy * dy)
-            self.rect.x += (dx / distance) * self.speed
-            self.rect.y += (dy / distance) * self.speed
+        if self.explosion_draw :
+                self.draw_explosion(screen)
+        else :
+            if not self.target.is_dead():
+                    dx = self.target.rect.centerx - self.rect.centerx
+                    dy = self.target.rect.centery - self.rect.centery
+                    distance = math.sqrt(dx * dx + dy * dy)
+                    self.rect.x += (dx / distance) * self.speed
+                    self.rect.y += (dy / distance) * self.speed
 
-            if self.rect.colliderect(self.target.rect):
-                screen.blit(self.explosion_image,pygame.Rect(self.target.rect[0],self.target.rect[1] ,50,50))
-                self.sfx.play()
-                self.explode()
+                    if self.rect.colliderect(self.target.rect):
+                        self.sfx.play()
+                        self.explode()
+                        self.explosion_draw = True
+                        self.hit_time = pygame.time.get_ticks()
+            else:
                 self.has_hit = True
-        else:
-            self.has_hit = True
 
+    def draw_explosion(self,screen) :
+        current_time = pygame.time.get_ticks()
+        if current_time - self.hit_time > 250 :
+            self.has_hit = True
+        screen.blit(self.explosion_image,pygame.Rect(self.target.rect[0],self.target.rect[1] ,50,50))
+
+    def draw(self, screen):
+        if not self.explosion_draw :
+            screen.blit(self.image, self.rect)
+
+    
     def explode(self):
         for enemy in groups.enemy_group:
             dx = self.rect.centerx - enemy.rect.centerx
