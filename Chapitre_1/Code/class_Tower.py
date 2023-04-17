@@ -271,7 +271,7 @@ class TriangleTower(TowerDefense, pygame.sprite.Sprite):
         self.original_pos = (x, y)
         self.cooldown = 0.5
         self.last_attack_time = 0
-        self.damage = 20
+        self.damage = 10
         self.cost = 40
         self.projectiles = []
         self.range = 175
