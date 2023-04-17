@@ -34,6 +34,10 @@
    'C:\\Users\\pierr\\Documents\\L1\\Projet '
    'CMI\\Virus_Gate\\Chapitre_1\\Code\\path_assets.py',
    'PYMODULE'),
+  ('Chapitre_1.Code.quit',
+   'C:\\Users\\pierr\\Documents\\L1\\Projet '
+   'CMI\\Virus_Gate\\Chapitre_1\\Code\\quit.py',
+   'PYMODULE'),
   ('Chapitre_1.Code.waves',
    'C:\\Users\\pierr\\Documents\\L1\\Projet '
    'CMI\\Virus_Gate\\Chapitre_1\\Code\\waves.py',
