@@ -10,6 +10,7 @@ def start_TD(volume):
     import Chapitre_1.Code.map as map
     import Chapitre_1.Code.groups as groups
     import Chapitre_1.Code.class_Button as class_Button
+    from Chapitre_1.Code.quit import leave
     
     #-------------------------------------------------------------------------------------------------------------------------------------------#
     pygame.init()
@@ -114,12 +115,11 @@ def start_TD(volume):
         screen.blit(text_surface, text_rect)
     #-------------------------------------------------------------------------------------------------------------------------------------------#
 
-    def draw_esc(screen) :
-        text = "Appuyer sur Echap pour quitter"
+    def draw_text(screen,text,coord) :
         text_color = pygame.Color('white')
         font = pygame.font.Font(None, 15)
         text_surface = font.render(text, True, text_color)
-        text_rect = text_surface.get_rect(topright=(175, 0))
+        text_rect = text_surface.get_rect(topright=coord)
         screen.blit(text_surface, text_rect)
     #-------------------------------------------------------------------------------------------------------------------------------------------#
     def draw_price(screen,cost,coord):  
@@ -297,7 +297,9 @@ def start_TD(volume):
         draw_player_lives(screen, player_lives)
         draw_player_money(screen, player_money)
         draw_prices(screen,TOWER_COSTS,tower_dico)
-        draw_esc(screen) 
+        draw_text(screen,"Appuyer sur Echap pour quitter",(175,0)) 
+        draw_text(screen,"Pour vendre une tour mettez",(1370,200)) 
+        draw_text(screen,"votre souris sur elle et appuyer sur s",(1420,210))
         pygame.display.flip()
     
     replay = True
@@ -331,3 +333,5 @@ def start_TD(volume):
                 if Quit.activated :
                     replay = False
     pygame.quit()
+    leave()
+    return None
